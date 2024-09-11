@@ -3,7 +3,7 @@ import { StyleSheet, View, Dimensions } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 
-import loadingJason from '../../assets/loading.json';
+import loadingJason from '../assets/loading.json';
 
 export interface SplashScreenProps {}
 
@@ -16,7 +16,7 @@ const SplashScreen = () => {
         const timeout = setTimeout(() => {
             navigation.dispatch(CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'Home' }],
+                routes: [{ name: 'INTRO' }],
             }));
         }, 3000);
 
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffac00',
+        backgroundColor: '#000000',
     },
 });
 

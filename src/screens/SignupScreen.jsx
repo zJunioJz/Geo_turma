@@ -19,7 +19,7 @@ const SignupScreen = () => {
   const [secureEntery, setSecureEntery] = useState(true);
 
   const handleGohome = () => {
-    navigation.navigate("HOME");
+    navigation.goBack();
   };
 
   const handleLogin = () => {
@@ -36,8 +36,8 @@ const SignupScreen = () => {
         />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-        <Text style={styles.headingText}>Let's get</Text>
-        <Text style={styles.headingText}>started</Text>
+      <Text style={styles.headingText}>Vamos começar</Text>
+      <Text style={styles.headingText}>a sua jornada!</Text>
       </View>
       {/* form  */}
       <View style={styles.formContainer}>
@@ -45,7 +45,7 @@ const SignupScreen = () => {
           <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
           <TextInput
             style={styles.textInput}
-            placeholder="Enter your email"
+            placeholder="Digite seu e-mail"
             placeholderTextColor={colors.secondary}
             keyboardType="email-address"
           />
@@ -54,7 +54,7 @@ const SignupScreen = () => {
           <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
           <TextInput
             style={styles.textInput}
-            placeholder="Enter your password"
+            placeholder="Digite sua senha"
             placeholderTextColor={colors.secondary}
             secureTextEntry={secureEntery}
           />
@@ -74,7 +74,7 @@ const SignupScreen = () => {
           />
           <TextInput
             style={styles.textInput}
-            placeholder="Enter your phone no"
+            placeholder="Digite seu telefone"
             placeholderTextColor={colors.secondary}
             secureTextEntry={secureEntery}
             keyboardType="phone-pad"
@@ -82,7 +82,7 @@ const SignupScreen = () => {
         </View>
 
         <TouchableOpacity style={styles.loginButtonWrapper}>
-          <Text style={styles.loginText}>Sign up</Text>
+          <Text style={styles.loginText}>Cadastrar</Text>
         </TouchableOpacity>
         <Text style={styles.continueText}>ou continue com</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
@@ -95,7 +95,7 @@ const SignupScreen = () => {
         <View style={styles.footerContainer}>
           <Text style={styles.accountText}>Já tem uma conta!</Text>
           <TouchableOpacity onPress={handleGohome}>
-            <Text style={styles.signupText}>Login</Text>
+            <Text style={styles.signupText}>Entrar</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -118,10 +118,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 130,
+    marginTop: 60,
   },
   textContainer: {
-    marginVertical: 20,
+    marginVertical: 30,
   },
   headingText: {
     fontSize: 32,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.SemiBold,
   },
   formContainer: {
-    marginTop: 20,
+    marginTop: 0,
   },
   inputContainer: {
     borderWidth: 1,

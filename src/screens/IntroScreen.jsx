@@ -4,7 +4,7 @@ import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
-const HomeScreen = () => {
+const IntroScreen = () => {
   const navigation = useNavigation();
 
   const handleLogin = () => {
@@ -27,20 +27,20 @@ const HomeScreen = () => {
           ]}
           onPress={handleLogin}
         >
-          <Text style={styles.loginButtonText}>Login</Text>
+          <Text style={styles.loginButtonText}>Entrar</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.loginButtonWrapper]}
           onPress={handleSignup}
         >
-          <Text style={styles.signupButtonText}>Sign-up</Text>
+          <Text style={styles.signupButtonText}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default HomeScreen;
+export default IntroScreen;
 
 const styles = StyleSheet.create({
   container: {
