@@ -22,7 +22,7 @@ const SignupScreen = () => {
     navigation.goBack();
   };
 
-  const handleLogin = () => {
+  const handleGoLogin = () => {
     navigation.navigate("LOGIN");
   };
 
@@ -94,7 +94,7 @@ const SignupScreen = () => {
         </TouchableOpacity>
         <View style={styles.footerContainer}>
           <Text style={styles.accountText}>Já tem uma conta!</Text>
-          <TouchableOpacity onPress={handleGohome}>
+          <TouchableOpacity onPress={handleGoLogin}>
             <Text style={styles.signupText}>Entrar</Text>
           </TouchableOpacity>
         </View>

@@ -1,19 +1,24 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
 
 const IntroScreen = () => {
   const navigation = useNavigation();
+  
+  const [activeButton, setActiveButton] = useState(null);
 
   const handleLogin = () => {
+    setActiveButton("login");
     navigation.navigate("LOGIN");
   };
 
   const handleSignup = () => {
+    setActiveButton("signup");
     navigation.navigate("SIGNUP");
   };
+
   return (
     <View style={styles.container}>
       <Image source={require("../assets/logo.png")} style={styles.logo} />
@@ -23,17 +28,20 @@ const IntroScreen = () => {
         <TouchableOpacity
           style={[
             styles.loginButtonWrapper,
-            { backgroundColor: colors.primary },
+            { backgroundColor: activeButton === "login" ? colors.primary : colors.white },
           ]}
           onPress={handleLogin}
         >
-          <Text style={styles.loginButtonText}>Entrar</Text>
+          <Text style={[styles.loginButtonText, { color: activeButton === "login" ? colors.white : colors.primary }]}>Entrar</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.loginButtonWrapper]}
+          style={[
+            styles.loginButtonWrapper,
+            { backgroundColor: activeButton === "signup" ? colors.primary : colors.white },
+          ]}
           onPress={handleSignup}
         >
-          <Text style={styles.signupButtonText}>Cadastrar</Text>
+          <Text style={[styles.signupButtonText, { color: activeButton === "signup" ? colors.white : colors.primary }]}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -88,10 +96,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "50%",
-    borderRadius: 98,
+    borderRadius: 100,
   },
   loginButtonText: {
-    color: colors.white,
     fontSize: 18,
     fontFamily: fonts.SemiBold,
   },

@@ -27,6 +27,10 @@ const LoginScreen = () => {
   const handleSignup = () => {
     navigation.navigate("SIGNUP");
   };
+  
+  const handleGohome = () => {
+    navigation.navigate("LOGIN");
+  };
 
   return (
     <View style={styles.container}>

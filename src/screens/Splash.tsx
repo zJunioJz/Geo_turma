@@ -4,6 +4,7 @@ import LottieView from 'lottie-react-native';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 
 import loadingJason from '../assets/loading.json';
+import { colors } from '../utils/colors';
 
 export interface SplashScreenProps {}
 
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#000000',
+        backgroundColor: colors.black,
     },
 });
 
