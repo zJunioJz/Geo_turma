@@ -49,7 +49,7 @@ const LoginScreen = () => {
       {/* form  */}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
-          <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
+          <Ionicons name={"mail-outline"} size={20} color={colors.secondary} />
           <TextInput
             style={styles.textInput}
             placeholder="Digite seu e-mail"
@@ -58,7 +58,7 @@ const LoginScreen = () => {
           />
         </View>
         <View style={styles.inputContainer}>
-          <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
+          <SimpleLineIcons name={"lock"} size={20} color={colors.secondary} />
           <TextInput
             style={styles.textInput}
             placeholder="Digite sua senha"

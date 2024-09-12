@@ -1,24 +1,43 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useState } from "react";
-import { colors } from "../utils/colors";
-import { fonts } from "../utils/fonts";
-
-import Ionicons from "react-native-vector-icons/Ionicons";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from 'react';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { useNavigation } from '@react-navigation/native';
+import { colors } from '../utils/colors';
+import { fonts } from '../utils/fonts';
+import axios from 'axios';
+import { API_URL } from '@env';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
-  const [secureEntery, setSecureEntery] = useState(true);
+  const [secureEntry, setSecureEntry] = useState(true);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleGohome = () => {
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/register`, {
+        username,
+        email,
+        password,
+      });
+      navigation.navigate('HOME');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Se for um erro do Axios
+        const errorMessage = error.response?.data ? JSON.stringify(error.response.data) : 'An unknown error occurred';
+        Alert.alert('Error', errorMessage);
+        console.error(error);
+      } else {
+        // Se não for um erro do Axios
+        Alert.alert('Error', 'An unknown error occurred');
+        console.error(error);
+      }
+    }
+  };
+
+  const handleGoHome = () => {
     navigation.goBack();
   };
 
@@ -28,68 +47,57 @@ const SignupScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGohome}>
-        <Ionicons
-          name={"arrow-back-outline"}
-          color={colors.primary}
-          size={25}
-        />
+      <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoHome}>
+        <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-      <Text style={styles.headingText}>Vamos começar</Text>
-      <Text style={styles.headingText}>a sua jornada!</Text>
+        <Text style={styles.headingText}>Vamos começar</Text>
+        <Text style={styles.headingText}>a sua jornada!</Text>
       </View>
-      {/* form  */}
+      {/* form */}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
-          <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
+          <SimpleLineIcons name={"user"} size={20} color={colors.secondary} />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Digite seu nome"
+            placeholderTextColor={colors.secondary}
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Ionicons name={"mail-outline"} size={20} color={colors.secondary} />
           <TextInput
             style={styles.textInput}
             placeholder="Digite seu e-mail"
             placeholderTextColor={colors.secondary}
+            value={email}
+            onChangeText={setEmail}
             keyboardType="email-address"
           />
         </View>
         <View style={styles.inputContainer}>
-          <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
+          <SimpleLineIcons name={"lock"} size={20} color={colors.secondary} />
           <TextInput
             style={styles.textInput}
             placeholder="Digite sua senha"
             placeholderTextColor={colors.secondary}
-            secureTextEntry={secureEntery}
+            secureTextEntry={secureEntry}
+            value={password}
+            onChangeText={setPassword}
           />
-          <TouchableOpacity
-            onPress={() => {
-              setSecureEntery((prev) => !prev);
-            }}
-          >
+          <TouchableOpacity onPress={() => setSecureEntry(prev => !prev)}>
             <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
-        <View style={styles.inputContainer}>
-          <SimpleLineIcons
-            name={"screen-smartphone"}
-            size={30}
-            color={colors.secondary}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Digite seu telefone"
-            placeholderTextColor={colors.secondary}
-            secureTextEntry={secureEntery}
-            keyboardType="phone-pad"
-          />
-        </View>
 
-        <TouchableOpacity style={styles.loginButtonWrapper}>
+        <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleRegister}>
           <Text style={styles.loginText}>Cadastrar</Text>
         </TouchableOpacity>
         <Text style={styles.continueText}>ou continue com</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
-          <Image
-            source={require("../assets/google.png")}
-            style={styles.googleImage}
-          />
+          <Image source={require('../assets/google.png')} style={styles.googleImage} />
           <Text style={styles.googleText}>Google</Text>
         </TouchableOpacity>
         <View style={styles.footerContainer}>
@@ -102,8 +110,6 @@ const SignupScreen = () => {
     </View>
   );
 };
-
-export default SignupScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -143,12 +149,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    alignItems:"center",
+    alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
     marginTop: 10,
     paddingHorizontal: 10,
     fontFamily: fonts.Light,
+    color: colors.white,
   },
   forgotPasswordText: {
     textAlign: "right",
@@ -211,3 +218,5 @@ const styles = StyleSheet.create({
     fontFamily: fonts.Bold,
   },
 });
+
+export default SignupScreen;
