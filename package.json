@@ -13,7 +13,6 @@
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
     "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
     "expo": "~51.0.28",
     "expo-font": "~12.0.10",
     "expo-status-bar": "~1.12.1",
@@ -33,5 +32,9 @@
     "metro-react-native-babel-preset": "^0.77.0",
     "typescript": "~5.3.3"
   },
-  "private": true
+  "private": true,
+  "description": "Este projeto faz parte de uma iniciativa extensionista da Faculdade Estácio de Sá, desenvolvido para a disciplina de Programação Para Dispositivos Móveis em Android. O objetivo é criar um aplicativo para um Ginásio Educacional Olímpico, que permite mostrar, inserir e exibir dados relacionados ao desempenho físico dos alunos, idade, IMC (Índice de Massa Corporal) e outros parâmetros importantes.",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

@@ -14,8 +14,22 @@ const SignupScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const handleRegister = async () => {
+    // Validar o comprimento da senha
+    if (password.length < 8) {
+      setPasswordError('Use 8 caracteres ou mais para sua senha');
+      return; // Impedir o envio do formulário se a senha for inválida
+    }
+
+    // Validar o domínio do e-mail
+    if (!email.endsWith('@gmail.com')) {
+      setEmailError('O e-mail deve terminar com @gmail.com');
+      return; // Impedir o envio do formulário se o e-mail não for válido
+    }
+
     try {
       const response = await axios.post(`${API_URL}/register`, {
         username,
@@ -25,14 +39,17 @@ const SignupScreen = () => {
       navigation.navigate('HOME');
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        // Se for um erro do Axios
-        const errorMessage = error.response?.data ? JSON.stringify(error.response.data) : 'An unknown error occurred';
-        Alert.alert('Error', errorMessage);
-        console.error(error);
+        const errorMessage = error.response?.data?.error || 'An unknown error occurred';
+
+        console.log('API Error:', errorMessage);
+
+        if (errorMessage.includes('E-mail já está em uso') || errorMessage.includes('Este E-mail já está em uso')) {
+          setEmailError('Este E-mail já está em uso. Tente outro.');
+        } else {
+          Alert.alert('Error', errorMessage);
+        }
       } else {
-        // Se não for um erro do Axios
         Alert.alert('Error', 'An unknown error occurred');
-        console.error(error);
       }
     }
   };
@@ -43,6 +60,24 @@ const SignupScreen = () => {
 
   const handleGoLogin = () => {
     navigation.navigate("LOGIN");
+  };
+
+  // Função para lidar com mudanças no campo de email
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    // Limpar o erro de email quando o usuário altera o valor do campo
+    if (text.endsWith('@gmail.com') || !emailError) {
+      setEmailError('');
+    }
+  };
+
+  // Função para lidar com mudanças no campo de senha
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    // Limpar o erro de senha quando o usuário altera o valor do campo
+    if (passwordError) {
+      setPasswordError('');
+    }
   };
 
   return (
@@ -73,10 +108,16 @@ const SignupScreen = () => {
             placeholder="Digite seu e-mail"
             placeholderTextColor={colors.secondary}
             value={email}
-            onChangeText={setEmail}
+            onChangeText={handleEmailChange}
             keyboardType="email-address"
           />
         </View>
+        {emailError ? (
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle-outline" size={20} color="red" style={styles.errorIcon} />
+            <Text style={styles.errorText}>{emailError}</Text>
+          </View>
+        ) : null}
         <View style={styles.inputContainer}>
           <SimpleLineIcons name={"lock"} size={20} color={colors.secondary} />
           <TextInput
@@ -85,13 +126,18 @@ const SignupScreen = () => {
             placeholderTextColor={colors.secondary}
             secureTextEntry={secureEntry}
             value={password}
-            onChangeText={setPassword}
+            onChangeText={handlePasswordChange}
           />
           <TouchableOpacity onPress={() => setSecureEntry(prev => !prev)}>
             <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
-
+        {passwordError ? (
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle-outline" size={20} color="red" style={styles.errorIcon} />
+            <Text style={styles.errorText}>{passwordError}</Text>
+          </View>
+        ) : null}
         <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleRegister}>
           <Text style={styles.loginText}>Cadastrar</Text>
         </TouchableOpacity>
@@ -116,6 +162,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.black,
     padding: 20,
+  },
+  errorText: {
+    color: 'red',
+    marginLeft: 5,
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  errorIcon: {
+    marginLeft: 10,
   },
   backButtonWrapper: {
     height: 40,
