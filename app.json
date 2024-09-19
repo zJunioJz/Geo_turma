@@ -23,9 +23,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "API_URL": "https://geo-mobileapp.onrender.com/"
-    },
     "plugins": [
       "expo-font"
     ]

@@ -6,10 +6,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 
 const app = express();
-app.use(cors({
-  origin: 'https://geo-mobileapp.onrender.com'
-}));
-
+app.use(cors());
 app.use(bodyParser.json());
 
 
