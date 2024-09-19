@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
@@ -6,7 +6,10 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://geo-mobileapp.onrender.com'
+}));
+
 app.use(bodyParser.json());
 
 
