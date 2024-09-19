@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
