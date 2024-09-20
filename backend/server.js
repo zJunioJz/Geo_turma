@@ -1,5 +1,5 @@
 import express from 'express';
-import { Pool } from 'pg';
+const { Pool } = require('pg');
 import cors from 'cors';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
