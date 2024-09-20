@@ -8,13 +8,13 @@ const app = express();
 
 // Configuração do CORS
 const corsOptions = {
-  origin: 'https://geo-mobile-app.onrender.com', // URL do seu frontend
+  origin: 'https://geo-mobile-app.onrender.com', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
 
 app.use(cors(corsOptions));
-app.use(express.json()); // Use express.json() para simplificar
+app.use(express.json());
 
 // Conexão com o banco de dados PostgreSQL
 const pool = new Pool({
