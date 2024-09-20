@@ -1,8 +1,8 @@
-import express from 'express';
+const express = require('express');
 const { Pool } = require('pg');
-import cors from 'cors';
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
+const cors = require('cors');
+const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -39,7 +39,6 @@ app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    // Verificar se o e-mail já existe
     const emailCheckQuery = 'SELECT * FROM users WHERE email = $1';
     const emailCheckResult = await pool.query(emailCheckQuery, [email]);
 
@@ -47,10 +46,7 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Este E-mail já está em uso. Tente outro.' });
     }
 
-    // Criptografar a senha
     const hash = await bcrypt.hash(password, 10);
-
-    // Inserir o novo usuário no banco de dados
     const insertUserQuery = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
     await pool.query(insertUserQuery, [username, email, hash]);
     
