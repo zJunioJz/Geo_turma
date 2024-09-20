@@ -1,37 +1,29 @@
+require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const dotenv = require('dotenv');
-
-dotenv.config();
 
 const app = express();
-
-// Configuração do CORS
-const corsOptions = {
-  origin: 'https://geo-mobile-app.onrender.com', 
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
 // Conexão com o banco de dados PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false,
-  },
+    rejectUnauthorized: false
+  }
 });
 
 // Teste de conexão
-pool.connect((err) => {
+pool.connect((err, client, release) => {
   if (err) {
     return console.error('Erro ao conectar ao PostgreSQL', err.stack);
   }
   console.log('Conectado ao PostgreSQL!');
+  release();
 });
 
 // Rota para registrar um usuário
@@ -39,6 +31,7 @@ app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
+    // Verificar se o e-mail já existe
     const emailCheckQuery = 'SELECT * FROM users WHERE email = $1';
     const emailCheckResult = await pool.query(emailCheckQuery, [email]);
 
@@ -46,14 +39,17 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Este E-mail já está em uso. Tente outro.' });
     }
 
+    // Criptografar a senha
     const hash = await bcrypt.hash(password, 10);
-    const insertUserQuery = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
-    await pool.query(insertUserQuery, [username, email, hash]);
-    
-    res.status(201).json({ message: 'Usuário registrado com sucesso!' });
-  } catch (error) {
-    console.error('Erro ao registrar usuário:', error);
-    res.status(500).json({ error: 'Erro ao registrar usuário' });
+
+    // Inserir o novo usuário
+    const sql = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
+    await pool.query(sql, [username, email, hash]);
+
+    res.send('Usuário registrado com sucesso!');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
   }
 });
 
