@@ -7,20 +7,25 @@ Este projeto faz parte de uma iniciativa extensionista da Faculdade Estácio de 
 - Luis Guilherme
 - Jefferson Junio
 - Renan Aderne
+- Daniel Heller
+- Luísa Soares
 
 ## Tecnologias Utilizadas 💻
 - **React Native**: Framework principal utilizado para o desenvolvimento do aplicativo mobile.
-- **SQL**: Utilizado para o gerenciamento e armazenamento de dados no banco de dados.
-- **JavaScript**: Linguagem principal para a lógica de programação e interatividade do aplicativo.
-- **HTML & CSS**: Utilizados para a construção e estilização das interfaces no contexto do aplicativo.
+- **Neon DB**: Banco de dados PostgreSQL utilizado para armazenar de forma eficiente os dados do sistema.
+- **Render**: Plataforma usada para hospedar o backend da aplicação.
+- **JavaScript**: Linguagem principal para a lógica de programação do aplicativo.
 - **Git**: Utilizado para controle de versão e colaboração no desenvolvimento do projeto.
 
 ## Funcionalidades 🛠️
 O aplicativo desenvolvido possui as seguintes funcionalidades:
-- **Coleta e Armazenamento de Dados**: Captura e armazena informações dos alunos, como idade, desempenho físico e IMC.
+- **Coleta e Armazenamento de Dados**: Captura e armazena informações dos alunos, como idade, desempenho físico e IMC, no banco de dados Neon DB.
 - **Análise de Dados**: Processa e analisa os dados coletados para identificar tendências e padrões.
 - **Visualização de Dados**: Gera gráficos e visualizações interativas para facilitar a interpretação dos dados.
 - **Relatórios**: Exibe relatórios detalhados diretamente no aplicativo para auxiliar na visualização e análise do desempenho dos alunos.
 - **Interface de Usuário**: Proporciona uma interface amigável e intuitiva para facilitar o acesso e uso do aplicativo pelos usuários.
 
+## Hospedagem do Backend 🌐
+- **Backend**: O backend do projeto é hospedado utilizando a plataforma **Render**, garantindo que a aplicação possa ser acessada e interagir com o banco de dados **Neon DB** de qualquer lugar.
 
+---
