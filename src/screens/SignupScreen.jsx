@@ -40,18 +40,20 @@ const SignupScreen = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.error || 'An unknown error occurred';
-
         console.log('API Error:', errorMessage);
-
-        if (errorMessage.includes('E-mail já está em uso') || errorMessage.includes('Este E-mail já está em uso')) {
+        console.log('Error Details:', error.response);
+    
+        if (error.response && error.response.status === 400) {
           setEmailError('Este E-mail já está em uso. Tente outro.');
         } else {
           Alert.alert('Error', errorMessage);
         }
       } else {
-        Alert.alert('Error', 'An unknown error occurred');
+        console.log('Unexpected Error:', error);
+        Alert.alert('Error', 'Erro ao conectar com o servidor. Tente novamente mais tarde.');
       }
     }
+    
   };
 
   const handleGoHome = () => {
