@@ -1,30 +1,35 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 
+// Configuração do CORS
+const corsOptions = {
+  origin: 'https://geo-mobile-app.onrender.com', // URL do seu frontend
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(express.json()); // Use express.json() para simplificar
 
 // Conexão com o banco de dados PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 // Teste de conexão
-pool.connect((err, client, release) => {
+pool.connect((err) => {
   if (err) {
     return console.error('Erro ao conectar ao PostgreSQL', err.stack);
   }
   console.log('Conectado ao PostgreSQL!');
-  release();
 });
 
 // Rota para registrar um usuário
@@ -43,17 +48,16 @@ app.post('/register', async (req, res) => {
     // Criptografar a senha
     const hash = await bcrypt.hash(password, 10);
 
-    // Inserir o novo usuário
-    const sql = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
-    await pool.query(sql, [username, email, hash]);
-
-    res.send('Usuário registrado com sucesso!');
-  } catch (err) {
-    res.status(500).send(err.message);
+    // Inserir o novo usuário no banco de dados
+    const insertUserQuery = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
+    await pool.query(insertUserQuery, [username, email, hash]);
+    
+    res.status(201).json({ message: 'Usuário registrado com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao registrar usuário:', error);
+    res.status(500).json({ error: 'Erro ao registrar usuário' });
   }
 });
-
-
 
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
