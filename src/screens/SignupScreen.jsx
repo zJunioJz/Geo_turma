@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   loginButtonWrapper: {
     backgroundColor: colors.primary,
-    borderRadius: 100,
+    borderRadius: 10,
     marginTop: 20,
   },
   loginText: {
