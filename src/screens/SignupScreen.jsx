@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     borderWidth: 1,
     borderColor: colors.secondary,
-    borderRadius: 100,
+    borderRadius: 10,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",

@@ -17,7 +17,7 @@ const SplashScreen = () => {
         const timeout = setTimeout(() => {
             navigation.dispatch(CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'INTRO' }],
+                routes: [{ name: 'LOGIN' }],
             }));
         }, 3000);
 

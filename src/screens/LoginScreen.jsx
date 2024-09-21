@@ -18,7 +18,7 @@ const LoginScreen = () => {
   const [secureEntery, setSecureEntery] = useState(true);
 
   const handleGoBack = () => {
-    navigation.goBack();
+    navigation.navigate("LOGIN");
   };
   const handleLogin = () => {
     navigation.navigate("HOME");

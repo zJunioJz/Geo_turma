@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/Home';
 import SplashScreen from './src/screens/Splash';
-import IntroScreen from './src/screens/IntroScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import ScheduleScreen from './src/screens/Schedule';
@@ -41,7 +40,6 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="SPLASH" component={SplashScreen} />
-        <Stack.Screen name="INTRO" component={IntroScreen} />
         <Stack.Screen name="LOGIN" component={LoginScreen} />
         <Stack.Screen name="SIGNUP" component={SignupScreen} />
         <Stack.Screen name="SCHEDULE" component={ScheduleScreen} />
