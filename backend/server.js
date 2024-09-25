@@ -26,6 +26,38 @@ pool.connect((err, client, release) => {
   release();
 });
 
+// Rota para acessar um usuário
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Verificar se o usuário existe
+    const userQuery = 'SELECT * FROM users WHERE email = $1';
+    const userResult = await pool.query(userQuery, [email]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(401).json({ error: 'E-mail ou senha incorretos.' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Comparar a senha fornecida com a senha armazenada
+    const isMatch = await bcrypt.compare(password, user.password);
+    
+    if (!isMatch) {
+      return res.status(401).json({ error: 'E-mail ou senha incorretos.' });
+    }
+
+    // Autenticação bem-sucedida
+    res.json({ message: 'Login realizado com sucesso!', user: { username: user.username, email: user.email } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
+
+
 // Rota para registrar um usuário
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
