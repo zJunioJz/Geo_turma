@@ -1,33 +1,97 @@
-import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import { useNavigation } from '@react-navigation/native';
-import { colors } from '../utils/colors';
-import { fonts } from '../utils/fonts';
-import axios from 'axios';
-import { API_URL } from '@env';
+import React, { useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { colors } from "../utils/colors";
+import { fonts } from "../utils/fonts";
+import axios from "axios";
+import { API_URL } from "@env";
 
 const SignupScreen = () => {
   const navigation = useNavigation();
   const [secureEntry, setSecureEntry] = useState(true);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userError, setUserError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Limpar os estados ao focar na tela
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setUserError("");
+      setEmailError("");
+      setPasswordError("");
+
+      return () => {
+        
+      };
+    }, [])
+  );
+
+  const handleUsernameChange = (text) => {
+    setUsername(text);
+    if (text.length >= 5) {
+      setUserError("");
+    }
+  };
+
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    if (emailRegex.test(text)) {
+      setEmailError("");
+    }
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    if (text.length >= 8) {
+      setPasswordError("");
+    }
+  };
 
   const handleRegister = async () => {
-    // Validar o comprimento da senha
-    if (password.length < 8) {
-      setPasswordError('Use 8 caracteres ou mais para sua senha');
-      return; // Impedir o envio do formulário se a senha for inválida
+    setLoading(true);
+
+    if (username.length < 5) {
+      setUserError("O nome de usuário deve ter pelo menos 5 caracteres.");
+      setLoading(false);
+      return;
+    } else {
+      setUserError("");
     }
 
-    // Validar o domínio do e-mail
-    if (!email.endsWith('@gmail.com')) {
-      setEmailError('O e-mail deve terminar com @gmail.com');
-      return; // Impedir o envio do formulário se o e-mail não for válido
+    if (!emailRegex.test(email)) {
+      setEmailError("Por favor, insira um e-mail válido.");
+      setLoading(false);
+      return;
+    } else {
+      setEmailError("");
+    }
+
+    if (password.length < 8) {
+      setPasswordError("Use 8 caracteres ou mais para sua senha");
+      setLoading(false);
+      return;
+    } else {
+      setPasswordError("");
     }
 
     try {
@@ -36,24 +100,30 @@ const SignupScreen = () => {
         email,
         password,
       });
-      navigation.navigate('HOME');
+
+      navigation.navigate("HOME");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.error || 'An unknown error occurred';
-        console.log('API Error:', errorMessage);
-        console.log('Error Details:', error.response);
-    
+        const errorMessage =
+          error.response?.data?.error || "Um erro desconhecido ocorreu";
+        console.log("API Error:", errorMessage);
+        console.log("Error Details:", error.response);
+
         if (error.response && error.response.status === 400) {
-          setEmailError('Este E-mail já está em uso. Tente outro.');
+          setEmailError("Este E-mail já está em uso. Tente outro.");
         } else {
-          Alert.alert('Error', errorMessage);
+          Alert.alert("Error", errorMessage);
         }
       } else {
-        console.log('Unexpected Error:', error);
-        Alert.alert('Error', 'Erro ao conectar com o servidor. Tente novamente mais tarde.');
+        console.log("Unexpected Error:", error);
+        Alert.alert(
+          "Error",
+          "Erro ao conectar com o servidor. Tente novamente mais tarde."
+        );
       }
+    } finally {
+      setLoading(false);
     }
-    
   };
 
   const handleGoHome = () => {
@@ -64,34 +134,19 @@ const SignupScreen = () => {
     navigation.navigate("LOGIN");
   };
 
-  // Função para lidar com mudanças no campo de email
-  const handleEmailChange = (text) => {
-    setEmail(text);
-    // Limpar o erro de email quando o usuário altera o valor do campo
-    if (text.endsWith('@gmail.com') || !emailError) {
-      setEmailError('');
-    }
-  };
-
-  // Função para lidar com mudanças no campo de senha
-  const handlePasswordChange = (text) => {
-    setPassword(text);
-    // Limpar o erro de senha quando o usuário altera o valor do campo
-    if (passwordError) {
-      setPasswordError('');
-    }
-  };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoHome}>
-        <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
+        <Ionicons
+          name={"arrow-back-outline"}
+          color={colors.primary}
+          size={25}
+        />
       </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.headingText}>Vamos começar</Text>
         <Text style={styles.headingText}>a sua jornada!</Text>
       </View>
-      {/* form */}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <SimpleLineIcons name={"user"} size={20} color={colors.secondary} />
@@ -100,9 +155,20 @@ const SignupScreen = () => {
             placeholder="Digite seu nome"
             placeholderTextColor={colors.secondary}
             value={username}
-            onChangeText={setUsername}
+            onChangeText={handleUsernameChange}
           />
         </View>
+        {userError ? (
+          <View style={styles.errorContainer}>
+            <Ionicons
+              name="alert-circle-outline"
+              size={20}
+              color="red"
+              style={styles.errorIcon}
+            />
+            <Text style={styles.errorText}>{userError}</Text>
+          </View>
+        ) : null}
         <View style={styles.inputContainer}>
           <Ionicons name={"mail-outline"} size={20} color={colors.secondary} />
           <TextInput
@@ -116,7 +182,12 @@ const SignupScreen = () => {
         </View>
         {emailError ? (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={20} color="red" style={styles.errorIcon} />
+            <Ionicons
+              name="alert-circle-outline"
+              size={20}
+              color="red"
+              style={styles.errorIcon}
+            />
             <Text style={styles.errorText}>{emailError}</Text>
           </View>
         ) : null}
@@ -130,22 +201,40 @@ const SignupScreen = () => {
             value={password}
             onChangeText={handlePasswordChange}
           />
-          <TouchableOpacity onPress={() => setSecureEntry(prev => !prev)}>
+          <TouchableOpacity onPress={() => setSecureEntry((prev) => !prev)}>
             <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
         {passwordError ? (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={20} color="red" style={styles.errorIcon} />
+            <Ionicons
+              name="alert-circle-outline"
+              size={20}
+              color="red"
+              style={styles.errorIcon}
+            />
             <Text style={styles.errorText}>{passwordError}</Text>
           </View>
         ) : null}
-        <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleRegister}>
-          <Text style={styles.loginText}>Cadastrar</Text>
+
+        <TouchableOpacity
+          style={[styles.loginButtonWrapper, loading && { opacity: 0.5 }]}
+          onPress={handleRegister}
+          disabled={loading} // Desabilitando o botão quando está carregando
+        >
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.white} />
+          ) : (
+            <Text style={styles.loginText}>Cadastrar</Text>
+          )}
         </TouchableOpacity>
+
         <Text style={styles.continueText}>ou continue com</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
-          <Image source={require('../assets/google.png')} style={styles.googleImage} />
+          <Image
+            source={require("../assets/google.png")}
+            style={styles.googleImage}
+          />
           <Text style={styles.googleText}>Google</Text>
         </TouchableOpacity>
         <View style={styles.footerContainer}>
@@ -166,12 +255,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   errorText: {
-    color: 'red',
+    color: "red",
     marginLeft: 5,
   },
   errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   errorIcon: {
     marginLeft: 10,
@@ -216,23 +305,17 @@ const styles = StyleSheet.create({
     fontFamily: fonts.Light,
     color: colors.white,
   },
-  forgotPasswordText: {
-    textAlign: "right",
-    color: colors.white,
-    fontFamily: fonts.SemiBold,
-    marginVertical: 10,
-  },
   loginButtonWrapper: {
     backgroundColor: colors.primary,
     borderRadius: 10,
     marginTop: 20,
+    paddingVertical: 10,
   },
   loginText: {
     color: colors.white,
     fontSize: 20,
     fontFamily: fonts.SemiBold,
     textAlign: "center",
-    padding: 10,
   },
   continueText: {
     textAlign: "center",
@@ -253,8 +336,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   googleImage: {
-    height: 20,
-    width: 20,
+    height: 24,
+    width: 24,
   },
   googleText: {
     fontSize: 20,
@@ -264,17 +347,15 @@ const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 20,
-    gap: 5,
+    marginTop: 20,
   },
   accountText: {
     color: colors.white,
-    fontFamily: fonts.Regular,
   },
   signupText: {
     color: colors.white,
-    fontFamily: fonts.Bold,
+    fontWeight: "bold",
+    marginLeft: 5,
   },
 });
 

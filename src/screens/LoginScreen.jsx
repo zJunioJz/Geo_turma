@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   StyleSheet,
   Text,
@@ -11,24 +12,78 @@ import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [secureEntery, setSecureEntery] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleGoBack = () => {
-    navigation.navigate("LOGIN");
-  };
-  const handleLogin = () => {
-    navigation.navigate("HOME");
+  // Limpar estados ao focar na tela
+  useFocusEffect(
+    React.useCallback(() => {
+      setEmail("");
+      setPassword("");
+      setErrorMessage("");
+
+      return () => {
+        
+      };
+    }, [])
+  );
+
+  const handleInputChange = (setter) => (value) => {
+    setter(value);
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   };
 
+  const handleLogin = async () => {
+    setLoading(true)
+
+    if (!email || !password) {
+      setErrorMessage("Por favor, preencha todos os campos.");
+      setLoading(false)
+      return;
+    } else {
+      setErrorMessage("");
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        navigation.navigate("HOME");
+      } else {
+        setErrorMessage("Email ou senha incorretos");
+      }
+    } catch (error) {
+      console.error("Erro de login:", error);
+      alert("Ocorreu um erro. Tente novamente.");
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+  
   const handleSignup = () => {
     navigation.navigate("SIGNUP");
   };
-  
-  const handleGohome = () => {
+
+  const handleGoBack = () => {
     navigation.navigate("LOGIN");
   };
 
@@ -42,11 +97,10 @@ const LoginScreen = () => {
         />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-      <Text style={styles.headingText}>Olá,</Text>
-  <Text style={styles.headingText}>Bem-vindo</Text>
-  <Text style={styles.headingText}>de volta, Atleta</Text>
+        <Text style={styles.headingText}>Olá,</Text>
+        <Text style={styles.headingText}>Bem-vindo</Text>
+        <Text style={styles.headingText}>de volta, Atleta</Text>
       </View>
-      {/* form  */}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Ionicons name={"mail-outline"} size={20} color={colors.secondary} />
@@ -55,6 +109,8 @@ const LoginScreen = () => {
             placeholder="Digite seu e-mail"
             placeholderTextColor={colors.secondary}
             keyboardType="email-address"
+            value={email}
+            onChangeText={handleInputChange(setEmail)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -64,6 +120,8 @@ const LoginScreen = () => {
             placeholder="Digite sua senha"
             placeholderTextColor={colors.secondary}
             secureTextEntry={secureEntery}
+            value={password}
+            onChangeText={handleInputChange(setPassword)}
           />
           <TouchableOpacity
             onPress={() => {
@@ -73,12 +131,33 @@ const LoginScreen = () => {
             <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
           </TouchableOpacity>
         </View>
+        {errorMessage ? (
+          <View style={styles.errorContainer}>
+            <Ionicons
+              name="alert-circle-outline"
+              size={20}
+              color="red"
+              style={styles.errorIcon}
+            />
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </View>
+        ) : null}
+
         <TouchableOpacity>
           <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleLogin}>
-          <Text style={styles.loginText}>Entrar</Text>
+        <TouchableOpacity
+          style={[styles.loginButtonWrapper, loading &&{ opacity: 0.5}]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading?(
+            <ActivityIndicator size="large" color={colors.white}/>
+          ) : (
+            <Text style={styles.loginText}>Entrar</Text>
+          )}
         </TouchableOpacity>
+
         <Text style={styles.continueText}>ou continue com</Text>
         <TouchableOpacity style={styles.googleButtonContainer}>
           <Image
@@ -97,8 +176,6 @@ const LoginScreen = () => {
     </View>
   );
 };
-
-export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -139,7 +216,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    alignItems:"center",
+    alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
     marginTop: 10,
@@ -157,13 +234,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 10,
     marginTop: 20,
+    paddingVertical: 10,
   },
   loginText: {
     color: colors.white,
     fontSize: 20,
     fontFamily: fonts.SemiBold,
     textAlign: "center",
-    padding: 10,
+
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    marginLeft: 5,
+  },
+  errorIcon: {
+    marginLeft: 10,
   },
   continueText: {
     textAlign: "center",
@@ -208,3 +297,5 @@ const styles = StyleSheet.create({
     fontFamily: fonts.Bold,
   },
 });
+
+export default LoginScreen;
