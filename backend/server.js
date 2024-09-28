@@ -102,24 +102,33 @@ app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    const emailCheckQuery = 'SELECT * FROM users WHERE email = $1';
-    const emailCheckResult = await pool.query(emailCheckQuery, [email]);
+      const emailCheckQuery = 'SELECT * FROM users WHERE email = $1';
+      const emailCheckResult = await pool.query(emailCheckQuery, [email]);
 
-    if (emailCheckResult.rows.length > 0) {
-      return res.status(400).json({ error: 'Este E-mail já está em uso. Tente outro.' });
-    }
+      if (emailCheckResult.rows.length > 0) {
+          return res.status(400).json({ error: 'Este E-mail já está em uso. Tente outro.' });
+      }
 
-    const hash = await bcrypt.hash(password, 10);
+      const hash = await bcrypt.hash(password, 10);
 
-    const sql = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
-    await pool.query(sql, [username, email, hash]);
+      const sql = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id';
+      const result = await pool.query(sql, [username, email, hash]);
 
-    res.send('Usuário registrado com sucesso!');
+      // Geração do token
+      const token = jwt.sign(
+          { id: result.rows[0].id, email },
+          process.env.JWT_SECRET,
+          { expiresIn: '1h' }
+      );
+
+      // Retorne a mensagem e o token
+      res.json({ message: 'Usuário registrado com sucesso!', token }); 
   } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
+      console.error(err);
+      res.status(500).send(err.message);
   }
 });
+
 
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
