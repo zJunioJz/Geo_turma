@@ -1,4 +1,3 @@
-// src/screens/LogoutScreen.js
 import React from 'react';
 import {
   StyleSheet,
