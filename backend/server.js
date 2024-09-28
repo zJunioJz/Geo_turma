@@ -4,6 +4,7 @@ const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(cors());
@@ -48,9 +49,15 @@ app.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ error: 'E-mail ou senha incorretos.' });
     }
+    // gerar token JWT
+    const token = jwt.sign(
+      { id: user.id, email: user.mail },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' } // tempo no qual o token expira "1 hora"
+    )
 
     // Autenticação bem-sucedida
-    res.json({ message: 'Login realizado com sucesso!', user: { username: user.username, email: user.email } });
+    res.json({ message: 'Login realizado com sucesso!', user: token });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
