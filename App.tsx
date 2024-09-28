@@ -3,14 +3,18 @@ import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { UserProvider, useUser } from './src/context/UserContext'; // Certifique-se de importar corretamente
 import HomeScreen from './src/screens/Home';
 import SplashScreen from './src/screens/Splash';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import LogoutScreen from './src/screens/LogoutScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import ScheduleScreen from './src/screens/Schedule';
 
 const Stack = createNativeStackNavigator();
 
+// Carregamento das fontes
 const fetchFonts = () => {
   return Font.loadAsync({
     'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
@@ -21,13 +25,16 @@ const fetchFonts = () => {
   });
 };
 
+// Função principal App
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
+  // Carregar as fontes ao iniciar
   useEffect(() => {
     fetchFonts().then(() => setFontsLoaded(true));
   }, []);
 
+  // Verificando se as fontes estão carregadas
   if (!fontsLoaded) {
     return (
       <View style={styles.container}>
@@ -37,18 +44,40 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SPLASH" component={SplashScreen} />
-        <Stack.Screen name="LOGIN" component={LoginScreen} />
-        <Stack.Screen name="SIGNUP" component={SignupScreen} />
-        <Stack.Screen name="SCHEDULE" component={ScheduleScreen} />
-        <Stack.Screen name="HOME" component={HomeScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <UserProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </UserProvider>
   );
 }
 
+// Função para gerenciar as telas com base no token
+const AppNavigator = () => {
+  const { token } = useUser(); // Inclua o token aqui
+
+  return (
+    <Stack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
+      {token ? ( // Verifica se há um token
+        <>
+          <Stack.Screen name="HOME" component={HomeScreen} />
+          <Stack.Screen name="SETTINGS" component={SettingsScreen} />
+          <Stack.Screen name="LOGOUT" component={LogoutScreen} />
+          <Stack.Screen name="SCHEDULE" component={ScheduleScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="SPLASH" component={SplashScreen} />
+          <Stack.Screen name="LOGIN" component={LoginScreen} />
+          <Stack.Screen name="SIGNUP" component={SignupScreen} />
+        </>
+      )}
+    </Stack.Navigator>
+  );
+};
+
+
+// Estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,

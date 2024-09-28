@@ -12,6 +12,8 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '../context/UserContext';
 import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
 import axios from "axios";
@@ -27,6 +29,7 @@ const SignupScreen = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { register } = useUser();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -69,7 +72,7 @@ const SignupScreen = () => {
 
   const handleRegister = async () => {
     setLoading(true);
-
+  
     if (username.length < 5) {
       setUserError("O nome de usuário deve ter pelo menos 5 caracteres.");
       setLoading(false);
@@ -77,7 +80,7 @@ const SignupScreen = () => {
     } else {
       setUserError("");
     }
-
+  
     if (!emailRegex.test(email)) {
       setEmailError("Por favor, insira um e-mail válido.");
       setLoading(false);
@@ -85,7 +88,7 @@ const SignupScreen = () => {
     } else {
       setEmailError("");
     }
-
+  
     if (password.length < 8) {
       setPasswordError("Use 8 caracteres ou mais para sua senha");
       setLoading(false);
@@ -93,22 +96,26 @@ const SignupScreen = () => {
     } else {
       setPasswordError("");
     }
-
+  
     try {
       const response = await axios.post(`${API_URL}/register`, {
         username,
         email,
         password,
       });
+  
+      // Armazenar o token no AsyncStorage
+      await AsyncStorage.setItem('userToken', response.data.token);
+      await register({ username, email }, response.data.token);
+      navigation.navigate('HOME');
 
-      navigation.navigate("HOME");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorMessage =
           error.response?.data?.error || "Um erro desconhecido ocorreu";
         console.log("API Error:", errorMessage);
         console.log("Error Details:", error.response);
-
+  
         if (error.response && error.response.status === 400) {
           setEmailError("Este E-mail já está em uso. Tente outro.");
         } else {
@@ -124,7 +131,7 @@ const SignupScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleGoHome = () => {
     navigation.goBack();

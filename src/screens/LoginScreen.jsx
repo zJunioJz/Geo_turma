@@ -13,6 +13,8 @@ import { fonts } from "../utils/fonts";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '../context/UserContext';
 import { API_URL } from "@env";
 
 const LoginScreen = () => {
@@ -22,6 +24,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useUser();
 
   // Limpar estados ao focar na tela
   useFocusEffect(
@@ -30,9 +33,7 @@ const LoginScreen = () => {
       setPassword("");
       setErrorMessage("");
 
-      return () => {
-        
-      };
+      return () => {};
     }, [])
   );
 
@@ -44,11 +45,11 @@ const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    setLoading(true)
+    setLoading(true);
 
     if (!email || !password) {
       setErrorMessage("Por favor, preencha todos os campos.");
-      setLoading(false)
+      setLoading(false);
       return;
     } else {
       setErrorMessage("");
@@ -66,6 +67,8 @@ const LoginScreen = () => {
       const data = await response.json();
 
       if (response.ok) {
+        await AsyncStorage.setItem('userToken', data.token);
+        await login(data.user, data.token); 
         navigation.navigate("HOME");
       } else {
         setErrorMessage("Email ou senha incorretos");
@@ -73,8 +76,7 @@ const LoginScreen = () => {
     } catch (error) {
       console.error("Erro de login:", error);
       alert("Ocorreu um erro. Tente novamente.");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -147,12 +149,12 @@ const LoginScreen = () => {
           <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.loginButtonWrapper, loading &&{ opacity: 0.5}]}
+          style={[styles.loginButtonWrapper, loading && { opacity: 0.5 }]}
           onPress={handleLogin}
           disabled={loading}
         >
-          {loading?(
-            <ActivityIndicator size="large" color={colors.white}/>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.white} />
           ) : (
             <Text style={styles.loginText}>Entrar</Text>
           )}
@@ -241,7 +243,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: fonts.SemiBold,
     textAlign: "center",
-
   },
   errorContainer: {
     flexDirection: 'row',
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 20,
-    gap: 5,
+    marginTop: 40,
   },
   accountText: {
     color: colors.white,
@@ -294,7 +295,8 @@ const styles = StyleSheet.create({
   },
   signupText: {
     color: colors.white,
-    fontFamily: fonts.Bold,
+    fontFamily: fonts.SemiBold,
+    marginLeft: 5,
   },
 });
 
