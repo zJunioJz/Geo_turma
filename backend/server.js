@@ -55,7 +55,8 @@ app.get('/user', authenticateToken, async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao buscar dados do usuário' });
+    console.error('Erro ao buscar dados do usuário:', error);
+    res.sendStatus(500); 
   }
 });
 
