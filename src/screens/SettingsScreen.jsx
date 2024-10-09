@@ -14,7 +14,7 @@ import FeatherIcon from "react-native-vector-icons/Feather";
 import { colors } from "../utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUser } from "../context/UserContext";
 
 const SettingsScreen = () => {
@@ -33,17 +33,29 @@ const SettingsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.black, paddingTop: StatusBar.currentHeight }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.black,
+        paddingTop: StatusBar.currentHeight,
+      }}
+    >
       <View style={styles.header}>
-        <View style={styles.headerAction}></View>
+        <TouchableOpacity style={styles.backButton} onPress={handleHome}>
+          <Ionicons
+            name={"arrow-back-outline"}
+            color={colors.white}
+            size={25}
+          />
+        </TouchableOpacity>
         <Text numberOfLines={1} style={styles.headerTitle}>
           Configurações
         </Text>
-        <View style={[styles.headerAction, { alignItems: "flex-end" }]}></View>
+        <View style={styles.headerAction}></View>
       </View>
 
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16}}
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16 }}
       >
         <View style={[styles.section]}>
           <Text style={styles.sectionTitle}>Minha Conta</Text>
@@ -60,7 +72,7 @@ const SettingsScreen = () => {
                 source={{
                   uri:
                     user?.profilePicture ||
-                    "https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png"
+                    "https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png",
                 }}
                 style={styles.profileAvatar}
               />
@@ -136,26 +148,25 @@ const SettingsScreen = () => {
             </View>
 
             <View style={[styles.rowWrapper, styles.rowLast]}>
-             
-                <View style={styles.row}>
+              <View style={styles.row}>
                 <FeatherIcon
-                    name="sun"
-                    size={19}
-                    color={colors.white}
-                    style={{ marginRight: 10 }}
-                  />
-                  <Text style={styles.rowLabel}>Temas</Text>
-                  
-                  <View style={styles.rowSpacer} />
-                  <Switch
-                    onValueChange={(theme) => setForm({ ...form, theme })}
-                    style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
-                    value={form.theme}
-                  />
-                </View>
+                  name="sun"
+                  size={19}
+                  color={colors.white}
+                  style={{ marginRight: 10 }}
+                />
+                <Text style={styles.rowLabel}>Temas</Text>
+
+                <View style={styles.rowSpacer} />
+                <Switch
+                  onValueChange={(theme) => setForm({ ...form, theme })}
+                  style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
+                  value={form.theme}
+                />
               </View>
             </View>
           </View>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recursos</Text>
@@ -249,7 +260,10 @@ const SettingsScreen = () => {
                 { alignItems: "center" },
               ]}
             >
-              <TouchableOpacity onPress={handleLogoutNavigation} style={styles.row}>
+              <TouchableOpacity
+                onPress={handleLogoutNavigation}
+                style={styles.row}
+              >
                 <Text style={[styles.rowLabel, styles.rowLabelLogout]}>
                   Sair
                 </Text>
@@ -271,7 +285,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     backgroundColor: colors.black,
   },
   headerAction: {
@@ -289,21 +303,9 @@ const styles = StyleSheet.create({
     flexBasis: 0,
     textAlign: "center",
   },
-
-  /** Content */
-  content: {
-    paddingHorizontal: 16,
-  },
-  contentFooter: {
-    marginTop: 24,
-    fontSize: 13,
-    fontWeight: "500",
-    textAlign: "center",
-    color: "#a69f9f",
-  },
   /** Section */
   section: {
-    paddingVertical: 12,
+    paddingVertical:10,
   },
   sectionTitle: {
     margin: 8,
@@ -325,6 +327,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.0,
     shadowRadius: 0,
     elevation: 0,
+  },
+  backButton: {
+    height: 40,
+    width: 40,
+    backgroundColor: colors.black,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 15,
   },
   /** Profile */
   profile: {

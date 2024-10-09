@@ -1,14 +1,18 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity,  } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useUser } from '../context/UserContext'; 
 import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const { user} = useUser(); 
+  const { user } = useUser(); 
 
   const handleSettingsPress = () => {
     navigation.navigate("SETTINGS");
+  };
+
+  const handleSchedulePress = () => {
+    navigation.navigate("SCHEDULE");
   };
 
   return (
@@ -21,6 +25,10 @@ const HomeScreen = () => {
       )}
       <TouchableOpacity style={styles.settingsButton} onPress={handleSettingsPress}>
         <Text style={styles.buttonText}>Ir para Configurações</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.scheduleButton} onPress={handleSchedulePress}>
+        <Text style={styles.buttonText}>Ir para Agenda</Text>
       </TouchableOpacity>
     </View>
   );
@@ -41,14 +49,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginVertical: 10,
   },
-  tokenText: {
-    fontSize: 16,
-    color: 'gray',
-    marginVertical: 10,
-  },
   settingsButton: {
     marginTop: 20,
     backgroundColor: '#007BFF', 
+    padding: 10,
+    borderRadius: 5,
+  },
+  scheduleButton: {
+    marginTop: 10,
+    backgroundColor: '#28a745', 
     padding: 10,
     borderRadius: 5,
   },

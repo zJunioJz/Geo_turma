@@ -146,7 +146,7 @@ const SignupScreen = () => {
       <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoHome}>
         <Ionicons
           name={"arrow-back-outline"}
-          color={colors.primary}
+          color={colors.white}
           size={25}
         />
       </TouchableOpacity>
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   backButtonWrapper: {
     height: 40,
     width: 40,
-    backgroundColor: colors.gray,
+    backgroundColor: colors.black,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",

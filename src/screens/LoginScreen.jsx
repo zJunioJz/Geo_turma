@@ -67,12 +67,13 @@ const LoginScreen = () => {
       const data = await response.json();
 
       if (response.ok) {
-        await AsyncStorage.setItem('userToken', data.token);
+        await AsyncStorage.setItem('token', data.token);
         await login(data.user, data.token); 
         navigation.navigate("HOME");
       } else {
         setErrorMessage("Email ou senha incorretos");
       }
+      
     } catch (error) {
       console.error("Erro de login:", error);
       alert("Ocorreu um erro. Tente novamente.");
@@ -91,13 +92,6 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
-        <Ionicons
-          name={"arrow-back-outline"}
-          color={colors.primary}
-          size={25}
-        />
-      </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.headingText}>Olá,</Text>
         <Text style={styles.headingText}>Bem-vindo</Text>
@@ -185,18 +179,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black,
     padding: 30,
   },
-  backButtonWrapper: {
-    height: 40,
-    width: 40,
-    backgroundColor: colors.gray,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 40,
-  },
   textContainer: {
     marginVertical: 20,
-    marginTop: 30,
+    marginTop: 70,
   },
   headingText: {
     fontSize: 32,

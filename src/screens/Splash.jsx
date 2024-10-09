@@ -15,38 +15,34 @@ const SplashScreen = () => {
 
     useEffect(() => {
         const checkToken = async () => {
-            const token = await AsyncStorage.getItem('token');
-            if (token) {
-                try {
-                    // Verifica a validade do token
-                    const response = await axios.get(`${API_URL}/verify-token`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`, 
-                        },
-                    });
-
-                    // Se o token for válido, redireciona para a HOME
-                    if (response.status === 200) {
-                        navigation.dispatch(CommonActions.reset({
-                            index: 0,
-                            routes: [{ name: 'HOME' }],
-                        }));
-                    }
-                } catch (error) {
-                    // Se o token não for válido, ou se ocorrer um erro, redireciona para LOGIN
-                    navigation.dispatch(CommonActions.reset({
-                        index: 0,
-                        routes: [{ name: 'LOGIN' }],
-                    }));
-                }
-            } else {
-                // Se não houver token, redireciona para LOGIN
-                navigation.dispatch(CommonActions.reset({
+            try {
+              const token = await AsyncStorage.getItem('token');
+              if (token) {
+                const response = await axios.get(`${API_URL}/verify-token`, {
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+          
+                if (response.status === 200) {
+                  navigation.dispatch(CommonActions.reset({
                     index: 0,
-                    routes: [{ name: 'LOGIN' }],
-                }));
+                    routes: [{ name: 'HOME' }],
+                  }));
+                } else {
+                  throw new Error('Token inválido');
+                }
+              } else {
+                throw new Error('Nenhum token encontrado');
+              }
+            } catch (error) {
+              console.error('Erro ao verificar o token ou buscar dados:', error);
+              // Certifique-se de que o redirecionamento para LOGIN ocorra aqui
+              navigation.dispatch(CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'LOGIN' }],
+              }));
             }
-        };
+          };
+          
 
         const timeout = setTimeout(() => {
             checkToken();
