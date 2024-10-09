@@ -119,7 +119,7 @@ app.post('/register', async (req, res) => {
       const token = jwt.sign(
           { id: result.rows[0].id, email },
           process.env.JWT_SECRET,
-          { expiresIn: '1h' }
+          { expiresIn: '1m' }
       );
 
       // Retorne a mensagem e o token
