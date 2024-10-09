@@ -88,7 +88,7 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '1m' }
+      { expiresIn: '1h' }
     );
 
     res.json({ message: 'Login realizado com sucesso!', token, user: { id: user.id, email: user.email } });
@@ -119,7 +119,7 @@ app.post('/register', async (req, res) => {
       const token = jwt.sign(
           { id: result.rows[0].id, email },
           process.env.JWT_SECRET,
-          { expiresIn: '1m' }
+          { expiresIn: '1h' }
       );
 
       // Retorne a mensagem e o token
