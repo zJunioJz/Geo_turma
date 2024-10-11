@@ -125,6 +125,46 @@ app.put('/update-user', authenticateToken, async (req, res) => {
   }
 });
 
+app.put('/update-password', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { oldPassword, newPassword } = req.body; // Recebe a senha antiga e a nova senha
+
+  if (!oldPassword || !newPassword) {
+    return res.status(400).json({ error: 'As senhas devem ser fornecidas.' });
+  }
+
+  try {
+    
+    const userQuery = 'SELECT * FROM users WHERE id = $1';
+    const userResult = await pool.query(userQuery, [userId]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Verifica se a senha antiga está correta
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'A senha antiga está incorreta.' });
+    }
+
+    // Criptografa a nova senha
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Atualiza a senha no banco de dados
+    const updatePasswordQuery = 'UPDATE users SET password = $1 WHERE id = $2 RETURNING *';
+    const updatedUserResult = await pool.query(updatePasswordQuery, [hashedPassword, userId]);
+
+    res.json({ message: 'Senha atualizada com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao atualizar a senha:', error);
+    res.status(500).json({ error: 'Erro ao atualizar a senha.' });
+  }
+});
+
+
 
 // Rota para registrar um usuário
 app.post('/register', async (req, res) => {
