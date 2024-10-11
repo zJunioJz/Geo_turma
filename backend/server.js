@@ -98,6 +98,34 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Rota para atualizar um usuário
+app.put('/update-user', authenticateToken, async (req, res) => {
+  const userId = req.user.id; 
+  const updates = req.body; 
+
+  
+  const fields = Object.keys(updates);
+  const values = Object.values(updates);
+  
+  const setQuery = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+
+  const query = `UPDATE users SET ${setQuery} WHERE id = $${fields.length + 1} RETURNING *`;
+
+  try {
+    const updatedUserResult = await pool.query(query, [...values, userId]);
+
+    if (updatedUserResult.rows.length > 0) {
+      res.json(updatedUserResult.rows[0]); 
+    } else {
+      res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar dados do usuário:', error);
+    res.sendStatus(500); 
+  }
+});
+
+
 // Rota para registrar um usuário
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
