@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from "@env";
 
@@ -15,7 +15,9 @@ export const UserProvider = ({ children }) => {
         const storedToken = await AsyncStorage.getItem('token');
         if (storedToken) {
           setToken(storedToken);
-          await fetchUserData(storedToken); // Se existir um token, busca os dados do usuário
+          await fetchUserData(storedToken);
+        } else {
+          console.log('Nenhum token encontrado');
         }
       } catch (error) {
         console.error('Erro ao carregar o token:', error);
@@ -24,33 +26,13 @@ export const UserProvider = ({ children }) => {
     loadToken();
   }, []);
 
-  // Função de login que salva o token no AsyncStorage e os dados do usuário no estado
-  const login = async (userData, authToken) => {
-    try {
-      await AsyncStorage.setItem('token', authToken);
-      setToken(authToken);
-      setUser(userData);
-
-      // Buscar dados adicionais do usuário
-      await fetchUserData(authToken);
-    } catch (error) {
-      console.error('Erro ao salvar token:', error);
-    }
-  };
-
-  // Função de registro que salva o token e dados do usuário
-  const register = async (userData, authToken) => {
-    try {
-      await AsyncStorage.setItem('token', authToken);
-      setToken(authToken);
-      setUser(userData);
-    } catch (error) {
-      console.error('Erro ao salvar token:', error);
-    }
-  };
-
   // Função para buscar dados do usuário com o token armazenado
-  const fetchUserData = async (authToken) => {
+  const fetchUserData = useCallback(async (authToken) => {
+    if (!authToken) {
+      console.log('Nenhum token encontrado, não é possível buscar dados do usuário.');
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}/user`, {
         method: "GET",
@@ -58,19 +40,44 @@ export const UserProvider = ({ children }) => {
           "Authorization": `Bearer ${authToken}`,
         },
       });
+
       const data = await response.json();
+
       if (response.ok) {
         setUser(data);
       } else {
-        console.error('Erro ao buscar dados do usuário:', data);
+        console.error('Erro ao buscar dados do usuário:', data.message || data.error);
       }
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error);
     }
-  };
+  }, []);
 
-  // Função de logout que limpa o token e os dados do usuário
-  const logout = async () => {
+  // Função de login
+  const login = useCallback(async (userData, authToken) => {
+    try {
+      await AsyncStorage.setItem('token', authToken);
+      setToken(authToken);
+      setUser(userData);
+      await fetchUserData(authToken);
+    } catch (error) {
+      console.error('Erro ao salvar token:', error);
+    }
+  }, [fetchUserData]);
+
+  // Função de registro
+  const register = useCallback(async (userData, authToken) => {
+    try {
+      await AsyncStorage.setItem('token', authToken);
+      setToken(authToken);
+      setUser(userData);
+    } catch (error) {
+      console.error('Erro ao salvar token:', error);
+    }
+  }, []);
+
+  // Função de logout
+  const logout = useCallback(async () => {
     try {
       await AsyncStorage.removeItem('token');
       setToken(null);
@@ -78,10 +85,10 @@ export const UserProvider = ({ children }) => {
     } catch (error) {
       console.error('Erro ao remover token:', error);
     }
-  };
+  }, []);
 
   return (
-    <UserContext.Provider value={{ user, token, login, register, logout }}>
+    <UserContext.Provider value={{ user, setUser, token, login, register, logout }}>
       {children}
     </UserContext.Provider>
   );

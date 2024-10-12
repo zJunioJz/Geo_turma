@@ -3,7 +3,7 @@ import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { UserProvider, useUser } from './src/context/UserContext'; // Importação do UserContext
+import { UserProvider, useUser } from './src/context/UserContext';
 import HomeScreen from './src/screens/Home';
 import SplashScreen from './src/screens/Splash';
 import LoginScreen from './src/screens/LoginScreen';
@@ -53,7 +53,7 @@ export default function App() {
 
 // Função para gerenciar as telas com base no token
 const AppNavigator = () => {
-  const { user } = useUser(); // Use o hook aqui
+  const { user } = useUser();
 
   return (
     <Stack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
