@@ -14,7 +14,6 @@ import FeatherIcon from "react-native-vector-icons/Feather";
 import { colors } from "../utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUser } from "../context/UserContext";
 
 const SettingsScreen = () => {
@@ -27,6 +26,10 @@ const SettingsScreen = () => {
 
   const handleLogoutNavigation = () => {
     navigation.navigate("LOGOUT");
+  };
+
+  const handleProfilePress = () => {
+    navigation.navigate("PROFILE");
   };
   const handleHome = () => {
     navigation.navigate("HOME");
@@ -78,12 +81,12 @@ const SettingsScreen = () => {
               />
 
               <View style={styles.profileBody}>
-                <Text style={styles.profileName}>
-                  {user?.username || "Nome do Usuário"}
-                </Text>
-                <Text style={styles.profileHandle}>
-                  {user?.email || "email@example.com"}
-                </Text>
+                {user?.username && (
+                  <Text style={styles.profileName}>{user.username}</Text>
+                )}
+                {user?.email && (
+                  <Text style={styles.profileHandle}>{user.email}</Text>
+                )}
               </View>
             </TouchableOpacity>
           </View>
@@ -94,7 +97,7 @@ const SettingsScreen = () => {
 
           <View style={styles.sectionBody}>
             <View style={[styles.rowWrapper, styles.rowFirst]}>
-              <TouchableOpacity onPress={() => {}} style={styles.row}>
+              <TouchableOpacity style={styles.row} onPress={handleProfilePress}>
                 <FeatherIcon
                   name="user"
                   size={20}
@@ -103,7 +106,7 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Meus Dados</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
@@ -123,7 +126,7 @@ const SettingsScreen = () => {
                 <Text style={styles.rowLabel}>Localização</Text>
                 <View style={styles.rowSpacer} />
                 <Text style={styles.rowValue}>Brasil, RJ</Text>
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
@@ -187,7 +190,7 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Fale Conosco</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
@@ -206,7 +209,7 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Reportar Bug</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
@@ -225,7 +228,7 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Avaliar na Play Store</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
 
@@ -244,7 +247,7 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Termos e Privacidade</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color="#bcbcbc" name="chevron-right" size={19} />
+                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
               </TouchableOpacity>
             </View>
           </View>
@@ -305,7 +308,7 @@ const styles = StyleSheet.create({
   },
   /** Section */
   section: {
-    paddingVertical:10,
+    paddingVertical: 10,
   },
   sectionTitle: {
     margin: 8,
@@ -319,7 +322,7 @@ const styles = StyleSheet.create({
   sectionBody: {
     borderRadius: 10,
     shadowColor: "#000",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.darkGray,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -341,7 +344,7 @@ const styles = StyleSheet.create({
   /** Profile */
   profile: {
     padding: 12,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.darkGray,
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -378,7 +381,7 @@ const styles = StyleSheet.create({
   },
   rowWrapper: {
     paddingLeft: 16,
-    borderBottomColor: "#2e2e2e",
+    borderBottomColor: colors.charcoalGray,
   },
   rowFirst: {
     borderTopLeftRadius: 12,
@@ -397,7 +400,7 @@ const styles = StyleSheet.create({
   rowValue: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#ababab",
+    color: colors.lightGray,
     marginRight: 4,
   },
   rowLast: {
@@ -408,7 +411,7 @@ const styles = StyleSheet.create({
     width: "100%",
     textAlign: "center",
     fontWeight: "600",
-    color: "#dc2626",
+    color: colors.brightRed,
   },
 });
 export default SettingsScreen;

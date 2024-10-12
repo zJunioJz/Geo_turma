@@ -3,7 +3,7 @@ import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { UserProvider, useUser } from './src/context/UserContext';
+import { UserProvider, useUser } from './src/context/UserContext'; // Importação do UserContext
 import HomeScreen from './src/screens/Home';
 import SplashScreen from './src/screens/Splash';
 import LoginScreen from './src/screens/LoginScreen';
@@ -11,6 +11,7 @@ import SignupScreen from './src/screens/SignupScreen';
 import LogoutScreen from './src/screens/LogoutScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import ScheduleScreen from './src/screens/Schedule';
+import UserProfileScreen from './src/screens/UserProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,12 +30,10 @@ const fetchFonts = () => {
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  // Carregar as fontes ao iniciar
   useEffect(() => {
     fetchFonts().then(() => setFontsLoaded(true));
   }, []);
 
-  // Verificando se as fontes estão carregadas
   if (!fontsLoaded) {
     return (
       <View style={styles.container}>
@@ -54,14 +53,15 @@ export default function App() {
 
 // Função para gerenciar as telas com base no token
 const AppNavigator = () => {
-  const { token } = useUser();
+  const { user } = useUser(); // Use o hook aqui
 
   return (
     <Stack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
-      {token ? ( // Verifica se há um token
+      {user ? (
         <>
           <Stack.Screen name="HOME" component={HomeScreen} />
           <Stack.Screen name="SETTINGS" component={SettingsScreen} />
+          <Stack.Screen name="PROFILE" component={UserProfileScreen} />
           <Stack.Screen name="LOGOUT" component={LogoutScreen} />
           <Stack.Screen name="SCHEDULE" component={ScheduleScreen} />
         </>
@@ -74,8 +74,7 @@ const AppNavigator = () => {
       )}
     </Stack.Navigator>
   );
-};
-
+}
 
 // Estilos
 const styles = StyleSheet.create({

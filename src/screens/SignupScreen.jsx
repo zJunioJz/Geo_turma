@@ -170,7 +170,7 @@ const SignupScreen = () => {
             <Ionicons
               name="alert-circle-outline"
               size={20}
-              color="red"
+              color={colors.red}
               style={styles.errorIcon}
             />
             <Text style={styles.errorText}>{userError}</Text>
@@ -192,7 +192,7 @@ const SignupScreen = () => {
             <Ionicons
               name="alert-circle-outline"
               size={20}
-              color="red"
+              color={colors.red}
               style={styles.errorIcon}
             />
             <Text style={styles.errorText}>{emailError}</Text>
@@ -217,7 +217,7 @@ const SignupScreen = () => {
             <Ionicons
               name="alert-circle-outline"
               size={20}
-              color="red"
+              color={colors.red}
               style={styles.errorIcon}
             />
             <Text style={styles.errorText}>{passwordError}</Text>
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   errorText: {
-    color: "red",
+    color: colors.red,
     marginLeft: 5,
   },
   errorContainer: {

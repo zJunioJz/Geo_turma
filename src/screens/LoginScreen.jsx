@@ -132,7 +132,7 @@ const LoginScreen = () => {
             <Ionicons
               name="alert-circle-outline"
               size={20}
-              color="red"
+              color={colors.red}
               style={styles.errorIcon}
             />
             <Text style={styles.errorText}>{errorMessage}</Text>

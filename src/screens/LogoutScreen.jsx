@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
     fontWeight: '500',
-    color: '#9a9a9a',
+    color: colors.grayNeutral,
   },
   btn: {
     flexDirection: 'row',
@@ -131,8 +131,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderWidth: 1,
-    backgroundColor: '#f75249',
-    borderColor: '#f75249',
+    backgroundColor: colors.coralRed,
+    borderColor: colors.coralRed,
   },
   btnText: {
     fontSize: 17,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 24,
     fontWeight: '600',
-    color: '#f75249',
+    color: colors.coralRed,
   },
 });
 

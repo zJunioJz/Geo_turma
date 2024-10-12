@@ -13,7 +13,6 @@ import {
 import moment from "moment";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { colors } from "../utils/colors";
-import { fonts } from "../utils/fonts";
 import Swiper from "react-native-swiper";
 import { useNavigation } from "@react-navigation/native";
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -184,25 +183,25 @@ const HomeSchedule = () => {
                   <View style={styles.classHeader}>
                     <Text style={styles.className}>Canoagem</Text>
                     <View style={styles.participantsContainer}>
-                      <Ionicons name="people-outline" color="white" size={14} />
+                      <Ionicons name="people-outline" color={colors.white} size={14} />
                       <Text style={styles.participantsText}>0/27</Text>
                     </View>
                   </View>
                   <View style={styles.instructorContainer}>
-                    <Ionicons name="person-outline" color="white" size={14} />
+                    <Ionicons name="person-outline" color={colors.white} size={14} />
                     <Text style={styles.classInstructor} paddingHorizontal={3}>
                       Jefferson Junio
                     </Text>
                   </View>
                   <View style={styles.classTimeContainer}>
-                    <Ionicons name="time-outline" color="white" size={14} />
+                    <Ionicons name="time-outline" color={colors.white} size={14} />
                     <Text style={styles.classTime} paddingHorizontal={3}>
                       07:50 a 10:30
                     </Text>
                   </View>
                 </View>
                 <FeatherIcon
-                  color="#bcbcbc"
+                  color={colors.silver}
                   name="chevron-right"
                   size={22}
                   style={{ marginTop: 30 }}
@@ -459,7 +458,7 @@ const styles = StyleSheet.create({
   selectedDate: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#999999",
+    color: colors.mediumGray,
     marginBottom: 12,
   },
   footer: {
@@ -474,7 +473,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     borderWidth: 1,
     borderRadius: 8,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.darkGray,
     flexDirection: "column",
     alignItems: "center",
   },
@@ -522,7 +521,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   participantsText: {
-    color: "white",
+    color: colors.white,
     fontSize: 14,
     marginLeft: 4,
   },
@@ -534,7 +533,7 @@ const styles = StyleSheet.create({
   classCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#2a2a2a",
+    backgroundColor: colors.charcoalGray,
     padding: 16,
     borderRadius: 8,
     flex: 1,
