@@ -39,24 +39,27 @@ const UserProfileScreen = () => {
     return phoneRegex.test(phone);
   };
 
-  // Função de mudança de telefone
-  const handlePhoneChange = (text) => {
-    setNewValue(text);
+  
+// Função de mudança de telefone
+const handlePhoneChange = (text) => {
+  // Remove todos os caracteres que não são dígitos
+  const cleaned = text.replace(/\D/g, '');
 
-    // Validação do telefone
-    if (!text) {
-      // Verifica se o campo celular está vazio
-      setPhoneError("");
-      return;
-    }
-    if (!validatePhoneNumber(text)) {
-      setPhoneError(
-        "Número de telefone inválido. Use o formato (xx) xxxxx-xxxx."
-      );
-    } else {
-      setPhoneError("");
-    }
-  };
+  // Formatação: (xx) xxxxx-xxxx
+  let formatted = '';
+  if (cleaned.length === 0) {
+    formatted = '';
+  } else if (cleaned.length <= 2) {
+    formatted = `(${cleaned}`;
+  } else if (cleaned.length <= 7) {
+    formatted = `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+  } else {
+    formatted = `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
+  }
+  
+  setNewValue(formatted);
+  setPhoneError("");
+};
 
   // Função para abrir o modal
   const openModal = (field) => {
@@ -386,6 +389,7 @@ const UserProfileScreen = () => {
                 placeholderTextColor={colors.white}
                 value={newValue}
                 onChangeText={handlePhoneChange}
+                 keyboardType="phone-pad"
               />
             ) : fieldToEdit === "address" ? (
               <TextInput
@@ -401,7 +405,6 @@ const UserProfileScreen = () => {
                 placeholder="Data de Nascimento"
                 placeholderTextColor={colors.white}
                 value={newValue}
-                onChangeText={(text) => setNewValue(text)}
               />
             )}
             {fieldToEdit === "password" && passwordError ? (
@@ -428,8 +431,9 @@ const UserProfileScreen = () => {
             ) : null}
 
             <TouchableOpacity
-              style={styles.saveButton}
+              style={[styles.saveButton, loading && styles.disabledButton]}
               onPress={handleSaveChange}
+              disabled={loading}
             >
               {loading ? ( // Exibindo o loading
                 <ActivityIndicator size="small" color={colors.white} />
@@ -451,11 +455,6 @@ const UserProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.black,
-    padding: 16,
-  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -586,6 +585,9 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: colors.white,
     fontWeight: "bold",
+  },
+  disabledButton: {
+    backgroundColor: colors.grayMedium,
   },
   closeButtonText: {
     color: colors.white,
