@@ -4,6 +4,7 @@
   "main": "authServer.js",
   "scripts": {
     "start": "node authServer.js",
+    "start:booking": "node BookingServer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
