@@ -65,6 +65,10 @@ const HomeSchedule = () => {
     });
   }, [week]);
 
+  const handleBookingPress = () => {
+    navigation.navigate("BOOKING");
+  };
+
   const handleGoBack = () => {
     navigation.navigate("HOME");
   };
@@ -209,195 +213,12 @@ const HomeSchedule = () => {
               </TouchableOpacity>
             </View>
           </View>
-
-          <View style={[styles.classSection, { paddingTop: 4 }]}>
-            <View style={styles.classBody}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.classCard}
-              >
-                <Image
-                  alt=""
-                  source={{
-                    uri: "https://res.cloudinary.com/imagehostingcloud/image/upload/v1728488647/natacao_llrct1.png",
-                  }}
-                  style={styles.classIcon}
-                />
-                <View style={styles.classInfo}>
-                  <View style={styles.classHeader}>
-                    <Text style={styles.className}>Natação</Text>
-                    <View style={styles.participantsContainer}>
-                      <Ionicons name="people-outline" color="white" size={14} />
-                      <Text style={styles.participantsText}>5/30</Text>
-                    </View>
-                  </View>
-                  <View style={styles.instructorContainer}>
-                    <Ionicons name="person-outline" color="white" size={14} />
-                    <Text style={styles.classInstructor} paddingHorizontal={3}>
-                      Daniel Oliveira
-                    </Text>
-                  </View>
-                  <View style={styles.classTimeContainer}>
-                    <Ionicons name="time-outline" color="white" size={14} />
-                    <Text style={styles.classTime} paddingHorizontal={3}>
-                      13:00 a 14:30
-                    </Text>
-                  </View>
-                </View>
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={22}
-                  style={{ marginTop: 30 }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={[styles.classSection, { paddingTop: 4 }]}>
-            <View style={styles.classBody}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.classCard}
-              >
-                <Image
-                  alt=""
-                  source={{
-                    uri: "https://res.cloudinary.com/imagehostingcloud/image/upload/v1728489049/variante-de-bola-de-basquete_y7ixy4.png",
-                  }}
-                  style={styles.classIcon}
-                />
-                <View style={styles.classInfo}>
-                  <View style={styles.classHeader}>
-                    <Text style={styles.className}>Basquete</Text>
-                    <View style={styles.participantsContainer}>
-                      <Ionicons name="people-outline" color="white" size={14} />
-                      <Text style={styles.participantsText}>10/15</Text>
-                    </View>
-                  </View>
-                  <View style={styles.instructorContainer}>
-                    <Ionicons name="person-outline" color="white" size={14} />
-                    <Text style={styles.classInstructor} paddingHorizontal={3}>
-                      Daniel Heller
-                    </Text>
-                  </View>
-                  <View style={styles.classTimeContainer}>
-                    <Ionicons name="time-outline" color="white" size={14} />
-                    <Text style={styles.classTime} paddingHorizontal={3}>
-                      07:30 a 09:30
-                    </Text>
-                  </View>
-                </View>
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={22}
-                  style={{ marginTop: 30 }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={[styles.classSection, { paddingTop: 4 }]}>
-            <View style={styles.classBody}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.classCard}
-              >
-                <Image
-                  alt=""
-                  source={{
-                    uri: "https://res.cloudinary.com/imagehostingcloud/image/upload/v1728489173/voleibol_jn9i1l.png",
-                  }}
-                  style={styles.classIcon}
-                />
-                <View style={styles.classInfo}>
-                  <View style={styles.classHeader}>
-                    <Text style={styles.className}>Voleibol</Text>
-                    <View style={styles.participantsContainer}>
-                      <Ionicons name="people-outline" color="white" size={14} />
-                      <Text style={styles.participantsText}>17/30</Text>
-                    </View>
-                  </View>
-                  <View style={styles.instructorContainer}>
-                    <Ionicons name="person-outline" color="white" size={14} />
-                    <Text style={styles.classInstructor} paddingHorizontal={3}>
-                      Renan Aderne
-                    </Text>
-                  </View>
-                  <View style={styles.classTimeContainer}>
-                    <Ionicons name="time-outline" color="white" size={14} />
-                    <Text style={styles.classTime} paddingHorizontal={3}>
-                      19:00 a 21:00
-                    </Text>
-                  </View>
-                </View>
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={22}
-                  style={{ marginTop: 30 }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={[styles.classSection, { paddingTop: 4 }]}>
-            <View style={styles.classBody}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.classCard}
-              >
-                <Image
-                  alt=""
-                  source={{
-                    uri: "https://res.cloudinary.com/imagehostingcloud/image/upload/v1728489357/corrida_kk1qzy.png",
-                  }}
-                  style={styles.classIcon}
-                />
-                <View style={styles.classInfo}>
-                  <View style={styles.classHeader}>
-                    <Text style={styles.className}>Corrida</Text>
-                    <View style={styles.participantsContainer}>
-                      <Ionicons name="people-outline" color="white" size={14} />
-                      <Text style={styles.participantsText}>9/10</Text>
-                    </View>
-                  </View>
-                  <View style={styles.instructorContainer}>
-                    <Ionicons name="person-outline" color="white" size={14} />
-                    <Text style={styles.classInstructor} paddingHorizontal={3}>
-                      Erick Salum
-                    </Text>
-                  </View>
-                  <View style={styles.classTimeContainer}>
-                    <Ionicons name="time-outline" color="white" size={14} />
-                    <Text style={styles.classTime} paddingHorizontal={3}>
-                      15:30 a 17:00
-                    </Text>
-                  </View>
-                </View>
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={22}
-                  style={{ marginTop: 30 }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
         </ScrollView>
         {/* Rodapé */}
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={handleBookingPress}>
             <View style={styles.btn}>
-              <Text style={styles.btnText}>Registrar</Text>
+              <Text style={styles.btnText}>Adicionar Turma</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -405,8 +226,6 @@ const HomeSchedule = () => {
     </SafeAreaView>
   );
 };
-
-export default HomeSchedule;
 
 const styles = StyleSheet.create({
   container: {
@@ -573,3 +392,5 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
 });
+
+export default HomeSchedule;
