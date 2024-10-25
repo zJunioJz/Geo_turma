@@ -29,9 +29,7 @@ pool.connect((err, client, release) => {
 
 // Middleware para autenticar o token
 function authenticateToken(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1]; // Extrai o token do cabeçalho
-
-  if (!token) return res.sendStatus(401); 
+  const token = req.headers['authorization']?.split(' ')[1]; // Extrai o token do cabeçalho 
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.sendStatus(403); 
