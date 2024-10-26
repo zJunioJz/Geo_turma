@@ -34,8 +34,8 @@ const SplashScreen = () => {
                 throw new Error('Nenhum token encontrado');
               }
             } catch (error) {
-              console.error('Erro ao verificar o token ou buscar dados:', error);
-              // Certifique-se de que o redirecionamento para LOGIN ocorra aqui
+              console.log('Nenhum token ativo no momento. Prosseguindo sem autenticação.');
+              //Redireciona para o LOGIN
               navigation.dispatch(CommonActions.reset({
                 index: 0,
                 routes: [{ name: 'LOGIN' }],

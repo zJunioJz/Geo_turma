@@ -12,7 +12,6 @@ import LogoutScreen from './src/screens/LogoutScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import ScheduleScreen from './src/screens/Schedule';
 import UserProfileScreen from './src/screens/UserProfileScreen';
-import BookingScreen from './src/screens/BookingScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -55,7 +54,7 @@ export default function App() {
 // Função para gerenciar as telas com base no token
 const AppNavigator = () => {
   const { user } = useUser();
-
+  
   return (
     <Stack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
       {user ? (
@@ -65,7 +64,6 @@ const AppNavigator = () => {
           <Stack.Screen name="PROFILE" component={UserProfileScreen} />
           <Stack.Screen name="LOGOUT" component={LogoutScreen} />
           <Stack.Screen name="SCHEDULE" component={ScheduleScreen} />
-          <Stack.Screen name="BOOKING" component={BookingScreen} />
         </>
       ) : (
         <>

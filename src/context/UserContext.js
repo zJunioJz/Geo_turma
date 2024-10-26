@@ -20,7 +20,7 @@ export const UserProvider = ({ children }) => {
           console.log('Nenhum token encontrado');
         }
       } catch (error) {
-        console.error('Erro ao carregar o token:', error);
+        console.log('Erro ao carregar o token:', error);
       }
     };
     loadToken();
@@ -46,10 +46,10 @@ export const UserProvider = ({ children }) => {
       if (response.ok) {
         setUser(data);
       } else {
-        console.error('Erro ao buscar dados do usuário:', data.message || data.error);
+        console.log('Erro ao buscar dados do usuário:', data.message || data.error);
       }
     } catch (error) {
-      console.error('Erro ao buscar dados do usuário:', error);
+      console.log('Erro ao buscar dados do usuário:', error);
     }
   }, []);
 
@@ -72,7 +72,7 @@ export const UserProvider = ({ children }) => {
       setToken(authToken);
       setUser(userData);
     } catch (error) {
-      console.error('Erro ao salvar token:', error);
+      console.log('Erro ao salvar token:', error);
     }
   }, []);
 

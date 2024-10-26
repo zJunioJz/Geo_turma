@@ -31,8 +31,17 @@ const SettingsScreen = () => {
   const handleProfilePress = () => {
     navigation.navigate("PROFILE");
   };
+  
   const handleHome = () => {
     navigation.navigate("HOME");
+  };
+
+  const countMissingFields = () => {
+    let count = 0;
+    if (!user.phone) count++;
+    if (!user.birthday) count++;
+    if (!user.address) count++;
+    return count;
   };
 
   return (
@@ -96,7 +105,7 @@ const SettingsScreen = () => {
           <Text style={styles.sectionTitle}>Preferências do Usuário</Text>
 
           <View style={styles.sectionBody}>
-            <View style={[styles.rowWrapper, styles.rowFirst]}>
+            <View style={styles.rowWrapper}>
               <TouchableOpacity style={styles.row} onPress={handleProfilePress}>
                 <FeatherIcon
                   name="user"
@@ -106,7 +115,18 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Meus Dados</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
+                <FeatherIcon
+                  color={colors.silver}
+                  name="chevron-right"
+                  size={19}
+                />
+
+                {/* Ícone de contador */}
+                {countMissingFields() > 0 && (
+                  <View style={styles.badgeContainer}>
+                    <Text style={styles.badgeText}>{countMissingFields()}</Text>
+                  </View>
+                )}
               </TouchableOpacity>
             </View>
 
@@ -126,7 +146,11 @@ const SettingsScreen = () => {
                 <Text style={styles.rowLabel}>Localização</Text>
                 <View style={styles.rowSpacer} />
                 <Text style={styles.rowValue}>Brasil, RJ</Text>
-                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
+                <FeatherIcon
+                  color={colors.silver}
+                  name="chevron-right"
+                  size={19}
+                />
               </TouchableOpacity>
             </View>
 
@@ -190,7 +214,11 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Fale Conosco</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
+                <FeatherIcon
+                  color={colors.silver}
+                  name="chevron-right"
+                  size={19}
+                />
               </TouchableOpacity>
             </View>
 
@@ -209,7 +237,11 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Reportar Bug</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
+                <FeatherIcon
+                  color={colors.silver}
+                  name="chevron-right"
+                  size={19}
+                />
               </TouchableOpacity>
             </View>
 
@@ -228,7 +260,11 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Avaliar na Play Store</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
+                <FeatherIcon
+                  color={colors.silver}
+                  name="chevron-right"
+                  size={19}
+                />
               </TouchableOpacity>
             </View>
 
@@ -247,7 +283,11 @@ const SettingsScreen = () => {
                 />
                 <Text style={styles.rowLabel}>Termos e Privacidade</Text>
                 <View style={styles.rowSpacer} />
-                <FeatherIcon color={colors.silver} name="chevron-right" size={19} />
+                <FeatherIcon
+                  color={colors.silver}
+                  name="chevron-right"
+                  size={19}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -382,6 +422,22 @@ const styles = StyleSheet.create({
   rowWrapper: {
     paddingLeft: 16,
     borderBottomColor: colors.charcoalGray,
+  },
+  badgeContainer: {
+    backgroundColor: colors.red,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    right: 35,
+    top: 12,
+  },
+  badgeText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: "bold",
   },
   rowFirst: {
     borderTopLeftRadius: 12,
