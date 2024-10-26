@@ -40,6 +40,17 @@ app.post('/create-booking', async (req, res) => {
       res.status(500).json({ error: 'Não foi possível criar a aula.' });
     }
   });
+
+  app.get('/all-classes', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM bookings');
+        const classes = result.rows;
+        res.status(200).json(classes);
+    } catch (error) {
+        console.error('Erro ao buscar as turmas:', error);
+        res.status(500).json({ error: 'Não foi possível buscar as turmas.' });
+    }
+});
   
 
 // Iniciar o servidor
