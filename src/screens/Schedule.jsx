@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   Dimensions,
@@ -22,6 +22,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Swiper from "react-native-swiper";
 import { useNavigation } from "@react-navigation/native";
 import FeatherIcon from "react-native-vector-icons/Feather";
+import { imageMap } from "../utils/imageMap";
 import { API_BOOKING_URL } from "@env";
 
 const { width } = Dimensions.get("window");
@@ -31,6 +32,7 @@ const ScheduleScreen = () => {
   const swiper = useRef();
   const [value, setValue] = useState(moment().toDate());
   const [week, setWeek] = useState(0);
+  const [classes, setClasses] = useState([]);
   const [selectedModalidade, setSelectedModalidade] = useState("");
   const [selectedProfessor, setSelectedProfessor] = useState("");
   const [maxAlunos, setMaxAlunos] = useState("");
@@ -43,8 +45,30 @@ const ScheduleScreen = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const modalidades = ["Canoagem", "Corrida", "Futebol"];
-  const professores = ["Jefferson Junio", "Daniel Oliveira", "Renan Aderne"];
+  const fetchClasses = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BOOKING_URL}/all-classes`);
+      const data = await response.json();
+      setClasses(data);
+    } catch (error) {
+      console.log("Erro ao buscar as turmas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const modalidades = ["Canoagem", "Corrida", "Voleibol", "Judô", "Ciclismo"];
+  const professores = [
+    "Jefferson Junio",
+    "Daniel Oliveira",
+    "Renan Aderne",
+    "Daniel Heller",
+  ];
 
   const formatDate = (date) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -91,15 +115,31 @@ const ScheduleScreen = () => {
     });
   }, [week]);
 
+  const resetFields = () => {
+    setSelectedModalidade("");
+    setSelectedProfessor("");
+    setMaxAlunos("");
+    setDate(new Date());
+    setSelectedTime(new Date());
+    setSelectedEndTime(new Date());
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    resetFields();
+  };
+
   const handleGoBack = () => {
     navigation.navigate("HOME");
   };
 
   const handleCreate = async () => {
+    const maxAlunosNumber = parseInt(maxAlunos, 10);
+
     if (
       !selectedModalidade ||
       !selectedProfessor ||
-      !maxAlunos ||
+      isNaN(maxAlunosNumber) ||
       !date ||
       !selectedTime ||
       !selectedEndTime
@@ -142,7 +182,8 @@ const ScheduleScreen = () => {
         const result = await response.json();
         Alert.alert("Sucesso", result.message);
         navigation.navigate("SCHEDULE");
-        setModalVisible(false);
+        closeModal();
+        fetchClasses();
       } else {
         const errorResult = await response.json();
         Alert.alert(
@@ -394,75 +435,113 @@ const ScheduleScreen = () => {
           <Text style={styles.selectedDate}>{formattedDate}</Text>
         </View>
 
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={[styles.classSection, { paddingTop: 4 }]}>
-            <View style={styles.classBody}>
-              <TouchableOpacity
-                onPress={() => {
-                  // handle onPress
-                }}
-                style={styles.classCard}
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: loading ? "center" : "flex-start",
+            alignItems: loading ? "center" : "stretch",
+          }}
+        >
+          {loading ? (
+            <ActivityIndicator
+              size={60}
+              color={colors.white}
+              style={{ marginBottom: 100 }}
+            />
+          ) : (
+            classes.map((classItem) => (
+              <View
+                key={classItem.id}
+                style={[styles.classSection, { paddingTop: 4 }]}
               >
-                <Image
-                  alt=""
-                  source={{
-                    uri: "https://res.cloudinary.com/imagehostingcloud/image/upload/v1728419706/canoagem_1_d0htnj.png",
-                  }}
-                  style={styles.classIcon}
-                />
-                <View style={styles.classInfo}>
-                  <View style={styles.classHeader}>
-                    <Text style={styles.className}>Canoagem</Text>
-                    <View style={styles.participantsContainer}>
-                      <Ionicons
-                        name="people-outline"
-                        color={colors.white}
-                        size={14}
-                      />
-                      <Text style={styles.participantsText}>0/27</Text>
+                <View style={styles.classBody}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // handle onPress
+                    }}
+                    style={styles.classCard}
+                  >
+                    <Image
+                      source={{
+                        uri:
+                          imageMap[classItem.modalidade] ||
+                          "https://res.cloudinary.com/imagehostingcloud/image/upload/v1729981363/placeholder_y98l4g.png",
+                      }}
+                      style={styles.classIcon}
+                    />
+                    <View style={styles.classInfo}>
+                      <View style={styles.classHeader}>
+                        <Text style={styles.className}>
+                          {classItem.modalidade}
+                        </Text>
+                        <View style={styles.participantsContainer}>
+                          <Ionicons
+                            name="people-outline"
+                            color={colors.white}
+                            size={14}
+                          />
+                          <Text style={styles.participantsText}>
+                            0/{classItem.max_alunos}
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={styles.instructorContainer}>
+                        <Ionicons
+                          name="person-outline"
+                          color={colors.white}
+                          size={14}
+                        />
+                        <Text
+                          style={[
+                            styles.classInstructor,
+                            { paddingHorizontal: 3 },
+                          ]}
+                        >
+                          {classItem.professor}
+                        </Text>
+                      </View>
+                      <View style={styles.classDateTimeContainer}>
+                        <Ionicons
+                          name="calendar-outline"
+                          color={colors.white}
+                          size={14}
+                        />
+                        <Text
+                          style={[
+                            styles.classDateTime,
+                            { paddingHorizontal: 3 },
+                          ]}
+                        >
+                          {new Date(classItem.date).toLocaleDateString("pt-BR")}
+                        </Text>
+                      </View>
+                      <View style={styles.classTimeContainer}>
+                        <Ionicons
+                          name="time-outline"
+                          color={colors.white}
+                          size={14}
+                        />
+                        <Text
+                          style={[styles.classTime, { paddingHorizontal: 3 }]}
+                        >
+                          {classItem.start_time.slice(0, 5)} a{" "}
+                          {classItem.end_time.slice(0, 5)}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.instructorContainer}>
-                    <Ionicons
-                      name="person-outline"
-                      color={colors.white}
-                      size={14}
+                    <FeatherIcon
+                      color={colors.silver}
+                      name="chevron-right"
+                      size={22}
+                      style={{ marginTop: 4 }}
                     />
-                    <Text style={styles.classInstructor} paddingHorizontal={3}>
-                      Jefferson Junio
-                    </Text>
-                  </View>
-                  <View style={styles.classDateTimeContainer}>
-                    <Ionicons
-                      name="calendar-outline"
-                      color={colors.white}
-                      size={14}
-                    />
-                    <Text style={styles.classDateTime} paddingHorizontal={3}>
-                      21/07/2024
-                    </Text>
-                  </View>
-                  <View style={styles.classTimeContainer}>
-                    <Ionicons
-                      name="time-outline"
-                      color={colors.white}
-                      size={14}
-                    />
-                    <Text style={styles.classTime} paddingHorizontal={3}>
-                      07:50 a 10:30
-                    </Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
-                <FeatherIcon
-                  color={colors.silver}
-                  name="chevron-right"
-                  size={22}
-                  style={{ marginTop: 4 }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+              </View>
+            ))
+          )}
         </ScrollView>
+
         {/* Rodapé */}
         <View style={styles.footer}>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -475,7 +554,7 @@ const ScheduleScreen = () => {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
+          onRequestClose={closeModal}
         >
           <View style={styles.modalBackground}>
             <View style={styles.modalBooking}>
@@ -484,7 +563,7 @@ const ScheduleScreen = () => {
                   <View style={styles.backContainerModal}>
                     <TouchableOpacity
                       style={styles.backButtonModal}
-                      onPress={() => setModalVisible(false)}
+                      onPress={closeModal}
                     >
                       <Ionicons
                         name={"arrow-back-outline"}
@@ -716,7 +795,6 @@ const styles = StyleSheet.create({
   classBody: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 15,
   },
   classCard: {
     flexDirection: "row",
