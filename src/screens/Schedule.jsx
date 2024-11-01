@@ -23,6 +23,14 @@ import Swiper from "react-native-swiper";
 import { useNavigation } from "@react-navigation/native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import { imageMap } from "../utils/imageMap";
+import {
+  modalidades,
+  professores,
+  dayTranslations,
+  monthTranslations,
+  months,
+  daysOfWeek,
+} from "../utils/constants";
 import { API_BOOKING_URL } from "@env";
 
 const { width } = Dimensions.get("window");
@@ -30,9 +38,14 @@ const { width } = Dimensions.get("window");
 const ScheduleScreen = () => {
   const navigation = useNavigation();
   const swiper = useRef();
-  const [value, setValue] = useState(moment().toDate());
-  const [week, setWeek] = useState(0);
+
+  const [currentWeek, setCurrentWeek] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allClasses, setAllClasses] = useState([]);
+  const [filteredClasses, setFilteredClasses] = useState([]);
+  const [value, setValue] = useState(moment().add(1, "days").toDate());
   const [classes, setClasses] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedModalidade, setSelectedModalidade] = useState("");
   const [selectedProfessor, setSelectedProfessor] = useState("");
   const [maxAlunos, setMaxAlunos] = useState("");
@@ -44,13 +57,52 @@ const ScheduleScreen = () => {
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
+  // Efeito para buscar as turmas quando o componente é montado
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  // Efeito para rolar o swiper para o segundo slide quando currentWeek muda
+  React.useEffect(() => {
+    if (swiper.current) {
+      swiper.current.scrollTo(1, false);
+    }
+  }, [currentWeek]);
+
+  // Efeito para filtrar as turmas com base na consulta de pesquisa
+  useEffect(() => {
+    if (searchQuery) {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      // Filtrar turmas com base na modalidade ou professor que correspondem à consulta de pesquisa
+      const filtered = classes.filter((classItem) => {
+        const modalidadeMatch = classItem.modalidade
+          .toLowerCase()
+          .includes(lowerCaseQuery);
+        const professorMatch = classItem.professor
+          .toLowerCase()
+          .includes(lowerCaseQuery);
+        return modalidadeMatch || professorMatch;
+      });
+      setFilteredClasses(filtered);
+    } else {
+      setFilteredClasses(classes); // Se não houver busca, mostra todas as classes
+    }
+  }, [searchQuery, classes]);
+
+  // Função para buscar as turmas da API
   const fetchClasses = async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_BOOKING_URL}/all-classes`);
       const data = await response.json();
       setClasses(data);
+      setFilteredClasses(data);
+      const allClassDates = data.map((classItem) =>
+        new Date(classItem.date).toDateString()
+      );
+      setAllClasses(allClassDates);
     } catch (error) {
       console.log("Erro ao buscar as turmas:", error);
     } finally {
@@ -58,63 +110,36 @@ const ScheduleScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchClasses();
-  }, []);
+  // Função para ordenar as turmas com base no critério selecionado
+  const handleSort = (criteria) => {
+    const sortFunctions = {
+      date: (a, b) => new Date(a.date) - new Date(b.date),
+      modality: (a, b) => a.modalidade.localeCompare(b.modalidade),
+      instructor: (a, b) => a.professor.localeCompare(b.professor),
+      time: (a, b) => a.start_time.localeCompare(b.start_time),
+    };
 
-  const modalidades = ["Canoagem", "Corrida", "Voleibol", "Judô", "Ciclismo"];
-  const professores = [
-    "Jefferson Junio",
-    "Daniel Oliveira",
-    "Renan Aderne",
-    "Daniel Heller",
-  ];
-
-  const formatDate = (date) => {
-    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-    return date.toLocaleDateString("pt-BR", options);
+    const sortFunction = sortFunctions[criteria] || ((a, b) => 0);
+    setFilteredClasses([...filteredClasses].sort(sortFunction));
   };
 
-  const dayTranslations = {
-    Sun: "Dom",
-    Mon: "Seg",
-    Tue: "Ter",
-    Wed: "Qua",
-    Thu: "Qui",
-    Fri: "Sex",
-    Sat: "Sab",
-  };
-
-  const monthTranslations = {
-    Jan: "Jan",
-    Feb: "Fev",
-    Mar: "Mar",
-    Apr: "Abr",
-    May: "Mai",
-    Jun: "Jun",
-    Jul: "Jul",
-    Aug: "Ago",
-    Sep: "Set",
-    Oct: "Out",
-    Nov: "Nov",
-    Dec: "Dez",
-  };
-
-  const formattedDate = `${dayTranslations[moment(value).format("ddd")]}, ${moment(value).format("DD")} de ${monthTranslations[moment(value).format("MMM")]} de ${moment(value).format("YYYY")}`;
-
-  const weeks = React.useMemo(() => {
-    const start = moment().add(week, "weeks").startOf("week");
-    return [-1, 0, 1].map((adj) => {
-      return Array.from({ length: 7 }).map((_, index) => {
-        const date = moment(start).add(adj, "week").add(index, "day");
-        return {
-          weekday: dayTranslations[date.format("ddd")],
-          date: date.toDate(),
-        };
+  // Função para lidar com a seleção de data
+  const handleDatePress = (date) => {
+    const dateString = date.toDateString(); // Converte a data para string
+    // Verifica se a data clicada já está selecionada
+    if (selectedDate === dateString) {
+      setSelectedDate(null); // Se já estiver selecionada, desmarca
+      setFilteredClasses(classes);
+    } else {
+      setSelectedDate(dateString); // Caso contrário, seleciona a nova data
+      const filtered = classes.filter((classItem) => {
+        return moment(classItem.date).isSame(date, "day");
       });
-    });
-  }, [week]);
+      setFilteredClasses(filtered);
+    }
+  };
 
+  // Função para redefinir os campos do formulário para o estado inicia
   const resetFields = () => {
     setSelectedModalidade("");
     setSelectedProfessor("");
@@ -124,22 +149,31 @@ const ScheduleScreen = () => {
     setSelectedEndTime(new Date());
   };
 
+  // Função para fechar o modal e redefinir os campos
   const closeModal = () => {
     setModalVisible(false);
     resetFields();
+  };
+
+  // Função para alternar a visibilidade do dropdown
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
   };
 
   const handleGoBack = () => {
     navigation.navigate("HOME");
   };
 
+  // Função para lidar com a criação de um agendamento
   const handleCreate = async () => {
     const maxAlunosNumber = parseInt(maxAlunos, 10);
 
+    // Valida os campos obrigatórios
     if (
       !selectedModalidade ||
       !selectedProfessor ||
       isNaN(maxAlunosNumber) ||
+      maxAlunosNumber < 0 ||
       !date ||
       !selectedTime ||
       !selectedEndTime
@@ -148,6 +182,7 @@ const ScheduleScreen = () => {
       return;
     }
 
+    // Formata as horas de início e fim
     const hoursStart = selectedTime.getHours().toString().padStart(2, "0");
     const minutesStart = selectedTime.getMinutes().toString().padStart(2, "0");
     const formattedStartTime = `${hoursStart}:${minutesStart}:00`;
@@ -167,6 +202,7 @@ const ScheduleScreen = () => {
 
     setLoading(true);
 
+    // Chamada API para criar o agendamento
     try {
       const response = await fetch(`${API_BOOKING_URL}/create-booking`, {
         method: "POST",
@@ -183,7 +219,7 @@ const ScheduleScreen = () => {
         Alert.alert("Sucesso", result.message);
         navigation.navigate("SCHEDULE");
         closeModal();
-        fetchClasses();
+        fetchClasses(); // Atualiza a lista de turmas após criar um agendamento
       } else {
         const errorResult = await response.json();
         Alert.alert(
@@ -199,34 +235,43 @@ const ScheduleScreen = () => {
     }
   };
 
+  // Função para formatar a data no formato brasileiro
+  const formatDate = (date) => {
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+    return date.toLocaleDateString("pt-BR", options);
+  };
+
+  // Função para formatar a hora no formato HH:mm
   const formatTime = (date) => {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
+  // String de data formatada para exibição
+  const formattedDate = `${dayTranslations[moment(value).format("ddd")]}, ${moment(value).format("DD")} de ${monthTranslations[moment(value).format("MMM")]} de ${moment(value).format("YYYY")}`;
+
+  // Semáforo para as semanas atuais com base no estado currentWeek
+  const currentWeeks = React.useMemo(() => {
+    const start = moment().add(currentWeek, "weeks").startOf("week");
+    return [-1, 0, 1].map((adj) => {
+      return Array.from({ length: 7 }).map((_, index) => {
+        const date = moment(start).add(adj, "week").add(index, "day");
+        return {
+          weekday: dayTranslations[date.format("ddd")],
+          date: date.toDate(),
+        };
+      });
+    });
+  }, [currentWeek]);
+
+  // Componente de seletor de data personalizado
   const CustomDatePicker = ({ visible, onClose }) => {
     const today = new Date();
     const [currentMonth, setCurrentMonth] = useState(today.getMonth());
     const [currentYear, setCurrentYear] = useState(today.getFullYear());
 
-    const months = [
-      "Janeiro",
-      "Fevereiro",
-      "Março",
-      "Abril",
-      "Maio",
-      "Junho",
-      "Julho",
-      "Agosto",
-      "Setembro",
-      "Outubro",
-      "Novembro",
-      "Dezembro",
-    ];
-
-    const daysOfWeek = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
-
+    // Função para obter o total de dias em um mês
     const daysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
     const nextMonth = () => {
@@ -247,6 +292,7 @@ const ScheduleScreen = () => {
       }
     };
 
+    // Função para renderizar os dias no calendário
     const renderDays = () => {
       const today = new Date(); // Obter a data atual
       const totalDays = daysInMonth(currentMonth, currentYear);
@@ -303,6 +349,7 @@ const ScheduleScreen = () => {
     };
 
     return (
+      // Modal de Seleção de Mês
       <Modal visible={visible} transparent={true} animationType="fade">
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
@@ -357,49 +404,96 @@ const ScheduleScreen = () => {
               size={25}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.ellipsisButton}>
-            <Ionicons name="ellipsis-vertical" color="white" size={25} />
+          <TouchableOpacity
+            style={styles.dropdownMenuButton}
+            onPress={toggleDropdown}
+          >
+            <Ionicons
+              name={isOpen ? "caret-up-outline" : "caret-down-outline"}
+              color="white"
+              size={25}
+            />
           </TouchableOpacity>
         </View>
+
+        {isOpen && (
+          <View style={styles.dropdownMenu}>
+            <TouchableOpacity style={styles.menuItem} onPress={fetchClasses}>
+              <Text style={styles.menuText}>Visualizar Todas as Turmas</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => handleSort("date")}
+            >
+              <Text style={styles.menuText}>Ordenar por Data</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => handleSort("modality")}
+            >
+              <Text style={styles.menuText}>Ordenar por Modalidade</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => handleSort("instructor")}
+            >
+              <Text style={styles.menuText}>Ordenar por Professor</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => handleSort("time")}
+            >
+              <Text style={styles.menuText}>Ordenar por Horário</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <View style={styles.header}>
           <Text style={styles.title}>Calendário</Text>
         </View>
 
         {/* Seletor de datas */}
+
         <View style={styles.datePicker}>
           <Swiper
             index={1}
             ref={swiper}
             loop={false}
             showsPagination={false}
-            onIndexChanged={(ind) => {
-              if (ind === 1) {
-                return;
-              }
-              setTimeout(() => {
-                const newIndex = ind - 1;
-                const newWeek = week + newIndex;
-                setWeek(newWeek);
-                setValue(moment(value).add(newIndex, "week").toDate());
-                swiper.current.scrollTo(1, false);
-              }, 100);
+            onIndexChanged={(index) => {
+              const newIndex = index - 1;
+              setCurrentWeek((prev) => prev + newIndex);
+              setValue(moment(value).add(newIndex, "weeks").toDate());
             }}
           >
-            {weeks.map((dates, index) => (
+            {currentWeeks.map((dates, index) => (
               <View style={styles.weekRow} key={index}>
                 {dates.map((item, dateIndex) => {
-                  const isActive =
-                    value.toDateString() === item.date.toDateString();
+                  const isToday = moment().isSame(item.date, "day");
+                  const dateString = item.date.toDateString(); // Armazena a data como string
+                  const isSelected = selectedDate === dateString; // Verifica se a data está selecionada
+
+                  // Verifica se a data tem classes
+                  const hasClass = allClasses.includes(dateString);
+                  const iconColor = isSelected
+                    ? "#111"
+                    : isToday || hasClass
+                      ? "white"
+                      : "black";
+
                   return (
                     <TouchableWithoutFeedback
                       key={dateIndex}
-                      onPress={() => setValue(item.date)}
+                      onPress={() => handleDatePress(item.date)}
                     >
                       <View
                         style={[
                           styles.dateItem,
-                          isActive && {
+                          isToday && {
+                            backgroundColor: "#007BFF",
+                            color: "#111",
+                          },
+                          isSelected && {
                             backgroundColor: colors.white,
                             borderColor: "#111",
                           },
@@ -408,7 +502,11 @@ const ScheduleScreen = () => {
                         <Text
                           style={[
                             styles.weekdayText,
-                            isActive && { color: colors.black },
+                            isToday
+                              ? { color: isSelected ? "#111" : "white" }
+                              : isSelected
+                                ? { color: "#111" }
+                                : { color: "white" },
                           ]}
                         >
                           {item.weekday}
@@ -416,11 +514,23 @@ const ScheduleScreen = () => {
                         <Text
                           style={[
                             styles.dateText,
-                            isActive && { color: colors.black },
+                            isToday
+                              ? { color: isSelected ? "#111" : "white" }
+                              : isSelected
+                                ? { color: "#111" }
+                                : { color: "white" },
                           ]}
                         >
                           {item.date.getDate()}
                         </Text>
+                        {hasClass && (
+                          <Ionicons
+                            name="star"
+                            size={10}
+                            color={iconColor}
+                            style={styles.starIndicator}
+                          />
+                        )}
                       </View>
                     </TouchableWithoutFeedback>
                   );
@@ -430,17 +540,36 @@ const ScheduleScreen = () => {
           </Swiper>
         </View>
 
-        {/* Conteúdo da agenda */}
+        {/* Data Formatada */}
         <View style={{ paddingHorizontal: 16 }}>
           <Text style={styles.selectedDate}>{formattedDate}</Text>
         </View>
 
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Pesquisar"
+            placeholderTextColor="white"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <Ionicons
+            name="search-sharp"
+            color={colors.white}
+            size={20}
+            style={styles.icon}
+          />
+        </View>
+
+        {/* Lista de Turmas */}
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: loading ? "center" : "flex-start",
             alignItems: loading ? "center" : "stretch",
           }}
+          style={{ marginTop: 8 }}
         >
           {loading ? (
             <ActivityIndicator
@@ -448,8 +577,18 @@ const ScheduleScreen = () => {
               color={colors.white}
               style={{ marginBottom: 100 }}
             />
+          ) : filteredClasses.length === 0 && searchQuery ? (
+            <Text
+              style={{
+                color: colors.white,
+                textAlign: "center",
+                marginTop: 50,
+              }}
+            >
+              Nenhuma turma encontrada.
+            </Text>
           ) : (
-            classes.map((classItem) => (
+            filteredClasses.map((classItem) => (
               <View
                 key={classItem.id}
                 style={[styles.classSection, { paddingTop: 4 }]}
@@ -550,6 +689,8 @@ const ScheduleScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
+
+        {/* Modal para criação de nova turma */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -633,7 +774,6 @@ const ScheduleScreen = () => {
                       onClose={() => setShowCustomDatePicker(false)}
                     />
                   )}
-
                   <Text style={styles.label}>Horário de Início</Text>
                   <TouchableOpacity
                     onPress={() => setShowTimePicker(true)}
@@ -656,7 +796,6 @@ const ScheduleScreen = () => {
                       }}
                     />
                   )}
-
                   <Text style={styles.label}>Horário de Fim</Text>
                   <TouchableOpacity
                     onPress={() => setShowEndTimePicker(true)}
@@ -679,7 +818,6 @@ const ScheduleScreen = () => {
                       }}
                     />
                   )}
-
                   <TouchableOpacity
                     onPress={handleCreate}
                     style={styles.createButton}
@@ -704,7 +842,7 @@ const ScheduleScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 24,
+    paddingVertical: 6,
     backgroundColor: colors.black,
   },
   backContainer: {
@@ -726,7 +864,8 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 40,
   },
-  ellipsisButton: {
+  /** DropdownMenu */
+  dropdownMenuButton: {
     height: 40,
     width: 40,
     backgroundColor: colors.black,
@@ -734,12 +873,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  dropdownMenu: {
+    position: "absolute",
+    top: 110,
+    right: 20,
+    backgroundColor: colors.darkGray,
+    borderRadius: 8,
+    padding: 10,
+    zIndex: 1,
+  },
+  menuItem: {
+    paddingVertical: 12,
+  },
+  menuText: {
+    color: colors.white,
+  },
   title: {
     fontSize: 32,
     fontWeight: "700",
     color: colors.white,
     marginBottom: 12,
   },
+  /** Swiper */
   datePicker: {
     height: 80,
     paddingVertical: 12,
@@ -752,21 +907,24 @@ const styles = StyleSheet.create({
     color: colors.mediumGray,
     marginBottom: 12,
   },
-  footer: {
-    paddingHorizontal: 16,
-  },
   /** Item */
   dateItem: {
     flex: 1,
     height: 50,
     marginHorizontal: 4,
-    paddingVertical: 6,
+    paddingVertical: 4,
     paddingHorizontal: 4,
     borderWidth: 1,
     borderRadius: 8,
     backgroundColor: colors.darkGray,
     flexDirection: "column",
     alignItems: "center",
+  },
+  starIndicator: {
+    position: "absolute",
+    bottom: 2,
+    left: "52%",
+    marginLeft: -1,
   },
   weekRow: {
     width: width,
@@ -779,13 +937,57 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "500",
     color: colors.white,
-    marginBottom: 4,
+    marginBottom: 1,
   },
   dateText: {
     fontSize: 15,
     fontWeight: "600",
     marginTop: -5,
     color: colors.white,
+  },
+  footer: {
+    paddingHorizontal: 16,
+  },
+  btn: {
+    backgroundColor: colors.blue,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  btnText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: colors.white,
+  },
+  /** Search */
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 2,
+    paddingHorizontal: 16,
+    alignSelf: "center",
+  },
+  icon: {
+    position: "absolute",
+    left: 22,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderColor: "gray",
+    backgroundColor: colors.darkGray,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    color: colors.white,
+    paddingLeft: 30,
+  },
+  searchButton: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: colors.white,
+    fontWeight: "bold",
   },
   /** Class Section */
   classSection: {
@@ -858,17 +1060,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: colors.white,
   },
-  btn: {
-    backgroundColor: colors.blue,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  btnText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.white,
-  },
   /** Modal */
   modalBooking: {
     backgroundColor: colors.charcoalGray,
@@ -919,7 +1110,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
-
   dateCustom: {
     color: colors.white,
   },
@@ -978,7 +1168,6 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 20,
   },
-
   disabledDayText: {
     color: colors.charcoalGray,
   },
