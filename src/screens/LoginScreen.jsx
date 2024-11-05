@@ -17,8 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../context/UserContext';
 import { API_URL } from "@env";
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
+const LoginScreen = ({navigation}) => {
   const [secureEntery, setSecureEntery] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,7 +68,7 @@ const LoginScreen = () => {
       if (response.ok) {
         await AsyncStorage.setItem('token', data.token);
         await login(data.user, data.token); 
-        navigation.navigate("HOME");
+        navigation.navigate("HomeTab");
       } else {
         setErrorMessage("Email ou senha incorretos");
       }
@@ -80,14 +79,6 @@ const LoginScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
-  
-  const handleSignup = () => {
-    navigation.navigate("SIGNUP");
-  };
-
-  const handleGoBack = () => {
-    navigation.navigate("LOGIN");
   };
 
   return (
@@ -164,7 +155,7 @@ const LoginScreen = () => {
         </TouchableOpacity>
         <View style={styles.footerContainer}>
           <Text style={styles.accountText}>Ainda não tem uma conta?</Text>
-          <TouchableOpacity onPress={handleSignup}>
+          <TouchableOpacity onPress={()=> navigation.navigate("SignUp")}>
             <Text style={styles.signupText}>Cadastre-se</Text>
           </TouchableOpacity>
         </View>

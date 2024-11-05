@@ -180,7 +180,7 @@ const Classes = () => {
   };
 
   const handleGoBack = () => {
-    navigation.navigate("HOME");
+    navigation.navigate("HomeTab");
   };
 
   // Função para lidar com a criação de um agendamento

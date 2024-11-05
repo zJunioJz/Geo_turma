@@ -3,6 +3,7 @@ import CustomButton from '../../../components/CustomButton';
 
 export default function Students({ navigation }) {
 
+   
     return (
         <View style={styles.container}>
             <Text  style={styles.h1}> Alunos </Text>

@@ -50,7 +50,18 @@ app.post('/create-booking', async (req, res) => {
         console.error('Erro ao buscar as turmas:', error);
         res.status(500).json({ error: 'Não foi possível buscar as turmas.' });
     }
-});
+  });
+
+  app.get("/userData", async (req, res) => {
+    try {
+      const result = await pool.query("SELECT * FROM users"); 
+      console.log(result.rows);
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+      res.status(500).json({ error: "Erro ao buscar dados" });
+    }
+  });
   
 
 // Iniciar o servidor
@@ -58,3 +69,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+module.exports = pool;
