@@ -25,7 +25,7 @@ const SplashScreen = () => {
                 if (response.status === 200) {
                   navigation.dispatch(CommonActions.reset({
                     index: 0,
-                    routes: [{ name: 'HOME' }],
+                    routes: [{ name: 'HomeTab' }],
                   }));
                 } else {
                   throw new Error('Token inválido');
@@ -38,7 +38,7 @@ const SplashScreen = () => {
               //Redireciona para o LOGIN
               navigation.dispatch(CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'LOGIN' }],
+                routes: [{ name: 'Login' }],
               }));
             }
           };

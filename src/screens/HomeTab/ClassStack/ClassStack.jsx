@@ -16,13 +16,13 @@ import {
 } from "react-native";
 import moment from "moment";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { colors } from "../utils/colors";
+import { colors } from "../../../utils/colors";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Swiper from "react-native-swiper";
 import { useNavigation } from "@react-navigation/native";
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { imageMap } from "../utils/imageMap";
+import { imageMap } from "../../../utils/imageMap";
 import {
   modalidades,
   professores,
@@ -30,12 +30,29 @@ import {
   monthTranslations,
   months,
   daysOfWeek,
-} from "../utils/constants";
+} from "../../../utils/constants";
 import { API_BOOKING_URL } from "@env";
-
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Students from './Students';
 const { width } = Dimensions.get("window");
 
-const ScheduleScreen = () => {
+//Navegação Stack:
+
+const Stack = createNativeStackNavigator();
+
+export default function ClassStack() {
+
+  return (
+
+    <Stack.Navigator initialRouteName="Classes">
+      <Stack.Screen name="Classes" component={Classes}/>
+      <Stack.Screen name="Students" component={Students}/>
+    </Stack.Navigator>
+  )
+
+}
+
+const Classes = () => {
   const navigation = useNavigation();
   const swiper = useRef();
 
@@ -1219,4 +1236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScheduleScreen;
+

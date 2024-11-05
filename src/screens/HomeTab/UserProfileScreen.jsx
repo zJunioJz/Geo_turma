@@ -12,10 +12,10 @@ import {
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { colors } from "../utils/colors";
-import { SafeAreaView, StatusBar } from "react-native";
+import { colors } from "../../utils/colors";
+import { SafeAreaView, StatusBar } from "react-native";""
 import { useNavigation } from "@react-navigation/native";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../../context/UserContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { API_URL } from "@env";
 

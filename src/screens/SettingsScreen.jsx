@@ -29,11 +29,11 @@ const SettingsScreen = () => {
   };
 
   const handleProfilePress = () => {
-    navigation.navigate("PROFILE");
+    navigation.navigate("Profile");
   };
   
   const handleHome = () => {
-    navigation.navigate("HOME");
+    navigation.navigate("HomeTab");
   };
 
   const countMissingFields = () => {

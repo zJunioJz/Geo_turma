@@ -107,7 +107,7 @@ const SignupScreen = () => {
       // Armazenar o token no AsyncStorage
       await AsyncStorage.setItem('userToken', response.data.token);
       await register({ username, email }, response.data.token);
-      navigation.navigate('HOME');
+      navigation.navigate('HomeTab');
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -138,7 +138,7 @@ const SignupScreen = () => {
   };
 
   const handleGoLogin = () => {
-    navigation.navigate("LOGIN");
+    navigation.navigate("Login");
   };
 
   return (

@@ -4,14 +4,10 @@ import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserProvider, useUser } from './src/context/UserContext';
-import HomeScreen from './src/screens/Home';
 import SplashScreen from './src/screens/Splash';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
-import LogoutScreen from './src/screens/LogoutScreen';
-import SettingsScreen from './src/screens/SettingsScreen';
-import ScheduleScreen from './src/screens/Schedule';
-import UserProfileScreen from './src/screens/UserProfileScreen';
+import HomeTab from './src/screens/HomeTab/HomeTab';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,20 +52,17 @@ const AppNavigator = () => {
   const { user } = useUser();
   
   return (
-    <Stack.Navigator initialRouteName="SPLASH" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
       {user ? (
         <>
-          <Stack.Screen name="HOME" component={HomeScreen} />
-          <Stack.Screen name="SETTINGS" component={SettingsScreen} />
-          <Stack.Screen name="PROFILE" component={UserProfileScreen} />
-          <Stack.Screen name="LOGOUT" component={LogoutScreen} />
-          <Stack.Screen name="SCHEDULE" component={ScheduleScreen} />
+          <Stack.Screen name="Splash" component={SplashScreen}/>
+          <Stack.Screen name="HomeTab" component={HomeTab}/>
         </>
       ) : (
         <>
-          <Stack.Screen name="SPLASH" component={SplashScreen} />
-          <Stack.Screen name="LOGIN" component={LoginScreen} />
-          <Stack.Screen name="SIGNUP" component={SignupScreen} />
+          <Stack.Screen name="Splash" component={SplashScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignupScreen} />
         </>
       )}
     </Stack.Navigator>
