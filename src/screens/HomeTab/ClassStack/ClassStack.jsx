@@ -34,6 +34,7 @@ import {
 import { API_BOOKING_URL } from "@env";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Students from './Students';
+import AddStudent from './AddStudent';
 const { width } = Dimensions.get("window");
 
 //Navegação Stack:
@@ -45,8 +46,9 @@ export default function ClassStack() {
   return (
 
     <Stack.Navigator initialRouteName="Classes">
-      <Stack.Screen name="Classes" component={Classes}/>
+      <Stack.Screen name="Classes" component={Classes} options={{headerShown: false}}/>
       <Stack.Screen name="Students" component={Students}/>
+      <Stack.Screen name="AddStudent" component={AddStudent}/>
     </Stack.Navigator>
   )
 
@@ -613,7 +615,13 @@ const Classes = () => {
                 <View style={styles.classBody}>
                   <TouchableOpacity
                     onPress={() => {
-                      // handle onPress
+                      console.log(classItem.id)
+                      navigation.navigate("Students", 
+                        {
+                          id_turma: classItem.id
+
+                        }
+                    );
                     }}
                     style={styles.classCard}
                   >
