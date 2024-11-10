@@ -7,6 +7,7 @@ import { UserProvider, useUser } from './src/context/UserContext';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import HomeTab from './src/screens/HomeTab/HomeTab';
+import LogoutScreen from './src/screens/LogoutScreen';
 
 const Stack = createNativeStackNavigator();
 

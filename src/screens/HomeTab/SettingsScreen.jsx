@@ -11,10 +11,31 @@ import {
   StatusBar,
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { colors } from "../utils/colors";
+import { colors } from "../../utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../../context/UserContext";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import LogoutScreen from '../LogoutScreen';
+
+export default function SettingsStack(){
+
+  const Stack = createNativeStackNavigator();
+
+  return (
+
+    <Stack.Navigator initialRouteName="Settings" screenOptions={{headerShown: false}}>
+    <Stack.Screen name="Settings" component={SettingsScreen}/>
+    <Stack.Screen name="Logout" component={LogoutScreen}/>
+
+
+
+
+    </Stack.Navigator>
+  )
+
+}
+
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -25,7 +46,7 @@ const SettingsScreen = () => {
   });
 
   const handleLogoutNavigation = () => {
-    navigation.navigate("LOGOUT");
+    navigation.navigate("Logout");
   };
 
   const handleProfilePress = () => {
@@ -470,4 +491,3 @@ const styles = StyleSheet.create({
     color: colors.brightRed,
   },
 });
-export default SettingsScreen;

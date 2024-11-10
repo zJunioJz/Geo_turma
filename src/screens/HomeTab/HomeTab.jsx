@@ -2,6 +2,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ClassStack from './ClassStack/ClassStack';
 import UserProfileScreen from './UserProfileScreen';
+import SettingsStack from './SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,11 @@ export default function HomeTab() {
                     iconName="person";
                 }
 
+                else if(route.name === "SettingsStack"){
+
+                    iconName="settings"
+                }
+
                 if(focused) {
 
                     color = "skyblue"
@@ -50,6 +56,7 @@ export default function HomeTab() {
         })}>
             <Tab.Screen name="ClassStack" component={ClassStack}/>
             <Tab.Screen name="Profile" component={UserProfileScreen} />
+            <Tab.Screen name="SettingsStack" component={SettingsStack}/>
         </Tab.Navigator>
     )
 }

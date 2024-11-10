@@ -236,7 +236,6 @@ const Classes = () => {
       if (response.ok) {
         const result = await response.json();
         Alert.alert("Sucesso", result.message);
-        navigation.navigate("SCHEDULE");
         closeModal();
         fetchClasses(); // Atualiza a lista de turmas após criar um agendamento
       } else {
