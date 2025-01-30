@@ -40,7 +40,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// Rota para acessar um usuário
+// Rota para acessar um usuárioa
 app.get('/user', authenticateToken, async (req, res) => {
   const userId = req.user.id; 
   const query = 'SELECT * FROM users WHERE id = $1';
