@@ -7,7 +7,6 @@ const { Pool } = require('pg');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-//teste
 // Conexão com o banco de dados PostgreSQL
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
